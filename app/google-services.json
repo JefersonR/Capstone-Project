@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "612106362108",
+    "firebase_url": "https://wake-in-place.firebaseio.com",
+    "project_id": "wake-in-place",
+    "storage_bucket": "wake-in-place.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612106362108:android:2856a4610fbb445f",
+        "android_client_info": {
+          "package_name": "br.wake_in_place"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "612106362108-9ep75p2uh1fdlrvsq8ckk35s26sijjs5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.wake_in_place",
+            "certificate_hash": "cc0d0590c2661261f934a9466076baf226bbc41b"
+          }
+        },
+        {
+          "client_id": "612106362108-aqrj2cu8an85qbmu8mca904jk124v2fs.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "612106362108-aqrj2cu8an85qbmu8mca904jk124v2fs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVid7kR_h2xP5Yys_9TQVt581GgsYXWYk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "612106362108-aqrj2cu8an85qbmu8mca904jk124v2fs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

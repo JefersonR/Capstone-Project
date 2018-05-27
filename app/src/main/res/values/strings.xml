@@ -1,0 +1,32 @@
+<resources>
+    <!--<string name="app_name">Promoo</string>-->
+
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Configurações</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!--Connection-->
+    <string name="connection_error">Problema com a conexão. Conecte e tente novamente!</string>
+    <string name="connection_fail">Houve uma falha nos nossos servidores, tente novamente.</string>
+    <string name="label_no_alarm">Nenhuma alarme configurado no momento</string>
+
+
+    <string name="label_monday">SEG</string>
+    <string name="label_tuesday">TER</string>
+    <string name="label_wednesday">QUA</string>
+    <string name="label_thursday">QUI</string>
+    <string name="label_friday">SEX</string>
+    <string name="label_saturday">SAB</string>
+    <string name="label_sunday">DOM</string>
+    <string name="label_mark_all">Marcar todos</string>
+    <string name="label_unmark_all">Desmarcar todos</string>
+    <string name="label_repeat">Repetir</string>
+    <string name="label_date_start">Data início</string>
+    <string name="label_date_end">Data final</string>
+    <string name="label_interval_start">Início intervalo</string>
+    <string name="label_interval_end">Final intervalo</string>
+    <string name="label_hint_date">00/00/00</string>
+    <string name="label_hint_hour">00:00</string>
+</resources>

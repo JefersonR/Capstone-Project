@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_date"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_below="@+id/layout_date_concise"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/regular_space_one"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:background="@color/colorPrimary"
+    tools:ignore="SmallSp">
+
+    <include
+        android:id="@+id/layout_linear_date"
+        layout="@layout/layout_date_hour"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/regular_space_two"
+        android:weightSum="1">
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/check_repeat"
+            android:layout_width="0dp"
+            android:layout_weight="0.3"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:checked="true"
+            android:text="@string/label_repeat" />
+
+        <Button
+            android:id="@+id/btn_mark_all"
+            android:layout_width="0dp"
+            android:layout_weight="0.35"
+            android:layout_height="wrap_content"
+            android:text="@string/label_mark_all"
+            android:textAllCaps="false"
+            android:background="?android:selectableItemBackground"
+            android:textColor="@color/colorAccent"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_mark_off"
+            android:layout_width="0dp"
+            android:layout_weight="0.35"
+            android:layout_height="wrap_content"
+            android:text="@string/label_unmark_all"
+            android:textAllCaps="false"
+            android:background="?android:selectableItemBackground"
+            android:textColor="@color/colorAccent"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/relative_days"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/regular_space_two"
+        android:orientation="horizontal"
+        android:weightSum="1.4">
+
+        <ToggleButton
+            android:id="@+id/toggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:background="@drawable/drawable_selector_toggle"
+            android:checked="true"
+            android:textOff="@string/label_monday"
+            android:textOn="@string/label_monday"
+            android:textSize="10sp" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:background="@drawable/drawable_selector_toggle"
+            android:checked="true"
+            android:textOff="@string/label_tuesday"
+            android:textOn="@string/label_tuesday"
+            android:textSize="10sp" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:background="@drawable/drawable_selector_toggle"
+            android:checked="true"
+            android:textOff="@string/label_wednesday"
+            android:textOn="@string/label_wednesday"
+            android:textSize="10sp" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:background="@drawable/drawable_selector_toggle"
+            android:checked="true"
+            android:textOff="@string/label_thursday"
+            android:textOn="@string/label_thursday"
+            android:textSize="10sp" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:background="@drawable/drawable_selector_toggle"
+            android:checked="true"
+            android:textOff="@string/label_friday"
+            android:textOn="@string/label_friday"
+            android:textSize="10sp" />   
+
+        <ToggleButton
+            android:id="@+id/toggleButton6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:background="@drawable/drawable_selector_toggle"
+            android:textOff="@string/label_saturday"
+            android:textOn="@string/label_saturday"
+            android:textSize="10sp" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:background="@drawable/drawable_selector_toggle"
+            android:textOff="@string/label_sunday"
+            android:textOn="@string/label_sunday"
+            android:textSize="10sp"
+
+            />
+    </LinearLayout>
+</LinearLayout>
