@@ -23,10 +23,19 @@
     <string name="label_mark_all">Marcar todos</string>
     <string name="label_unmark_all">Desmarcar todos</string>
     <string name="label_repeat">Repetir</string>
-    <string name="label_date_start">Data início</string>
+    <string name="label_date_start">A partir de</string>
     <string name="label_date_end">Data final</string>
     <string name="label_interval_start">Início intervalo</string>
     <string name="label_interval_end">Final intervalo</string>
     <string name="label_hint_date">00/00/00</string>
     <string name="label_hint_hour">00:00</string>
+    <string name="label_define_place">Defina um lugar</string>
+    <string name="label_my_places">Meus lugares</string>
+    <string name="label_new_places">Novo lugar</string>
+    <string name="label_distance_edit">Raio: %s</string>
+    <string name="label_summary">A partir de %s, entre %s e %s\nRepete: %s\nPróximo a %s</string>
+    <string name="label_save">Salvar</string>
+    <string name="title_new_alarm">Configurar Alarme</string>
+    <string name="label_confirm">Confirmar</string>
+    <string name="title_distance">Distância</string>
 </resources>

@@ -1,0 +1,10 @@
+<resources>
+    <string-array name="distances">
+        <item>500mts</item>
+        <item>1km</item>
+        <item>1,5km</item>
+        <item>2km</item>
+        <item>3km</item>
+        <item>5km</item>
+    </string-array>
+</resources>

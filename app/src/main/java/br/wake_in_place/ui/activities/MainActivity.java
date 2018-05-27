@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
 
     @Override
     protected void setLayout(View view) {
-        setToolbar( R.id.toolbar,"Wake in Place");
+        setToolbar( R.id.toolbar,false,"Wake in Place");
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mGoogleApiClient = new GoogleApiClient

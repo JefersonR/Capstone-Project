@@ -15,26 +15,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label">
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAf6XzMPIZrF2x1JMeKUIN1Y51wVr2hW8g"/>
+            android:value="AIzaSyAf6XzMPIZrF2x1JMeKUIN1Y51wVr2hW8g" />
 
         <activity
-            android:name="br.wake_in_place.ui.activities.SplashScreenActivity"
+            android:name=".ui.activities.SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        </activity>
-        <receiver android:name="br.wake_in_place.ui.services.AlarmReceiver"/>
+        <receiver android:name=".ui.services.AlarmReceiver" />
 
         <service
-            android:name="br.wake_in_place.ui.services.NotificationService"
+            android:name=".ui.services.NotificationService"
             android:enabled="true" />
 
         <activity
-            android:name="br.wake_in_place.ui.activities.MainActivity"
+            android:name=".ui.activities.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -45,8 +43,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="br.wake_in_place.ui.activities.RegisterAlarmActivity"
+            android:name=".ui.activities.RegisterAlarmActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.activities.MyPlacesActivity"></activity>
     </application>
 
 </manifest>

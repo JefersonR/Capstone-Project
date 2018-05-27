@@ -1,6 +1,8 @@
 package br.wake_in_place.ui.bases;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -16,6 +18,7 @@ import android.widget.ProgressBar;
 import br.wake_in_place.R;
 import br.wake_in_place.utils.Constants;
 import br.wake_in_place.utils.SessionManager;
+import butterknife.ButterKnife;
 
 public abstract class BaseActivity<T> extends AppCompatActivity implements Constants {
 
@@ -55,15 +58,17 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
             toolbar = (Toolbar) getmView().findViewById(getIdToolbar());
             toolbarProperties();
         } else {
-//            findViewById(R.id.toolbar).setVisibility(View.GONE);
+            findViewById(R.id.toolbar).setVisibility(View.GONE);
         }
     }
 
     private void toolbarProperties() {
         setSupportActionBar(toolbar);
+
         if (getSupportActionBar() != null) {
             if (isNavigationToolbar()) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                setColorIcon();
             }
             getSupportActionBar().setTitle(getTitleToolbar());
         }
@@ -74,6 +79,15 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
         if (getOnClickListener() != null) {
             toolbar.setNavigationOnClickListener(getOnClickListener());
         }
+
+    }
+
+    private void setColorIcon() {
+        Drawable backArrow = toolbar.getNavigationIcon();
+        if (backArrow != null)
+            backArrow.setColorFilter(getResources().getColor(android.R.color.black), PorterDuff.Mode.SRC_ATOP);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setHomeAsUpIndicator(backArrow);
     }
 
     @SuppressWarnings("unchecked")
@@ -91,6 +105,7 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         vs.setLayoutResource(getActivityLayout());
         mView = vs.inflate();
+        ButterKnife.bind(this,mView);
         return mView;
     }
 
@@ -148,6 +163,7 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
         setIdToolbar(idToolbar);
         setTitleToolbar(title);
         setNavigationToolbar(navigationToolbar);
+        hasToolbar = false;
     }
 
     public void setToolbar(@IdRes int idToolbar, boolean navigationToolbar) {
@@ -159,7 +175,7 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
     public void setToolbar(@IdRes int idToolbar, String titleToolbar) {
         setIdToolbar(idToolbar);
         setTitleToolbar(titleToolbar);
-        hasToolbar = false;
+
     }
 
 
