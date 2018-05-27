@@ -118,7 +118,7 @@
             android:checked="true"
             android:textOff="@string/label_friday"
             android:textOn="@string/label_friday"
-            android:textSize="10sp" />   
+            android:textSize="10sp" />
 
         <ToggleButton
             android:id="@+id/toggleButton6"
