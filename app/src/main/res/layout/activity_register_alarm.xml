@@ -130,12 +130,12 @@
                 android:background="@drawable/drawable_line_bottom"
                 android:clickable="true"
                 android:drawablePadding="@dimen/regular_space_one"
-                android:drawableStart="@android:drawable/ic_menu_recent_history"
+                android:drawableStart="@android:drawable/ic_menu_agenda"
                 android:focusable="true"
                 android:foreground="?android:selectableItemBackground"
                 android:gravity="start|center_vertical"
-                android:text="@string/label_hint_hour"
-                android:textColor="@color/gray_light" />
+                android:text="1 hora"
+                android:textColor="@color/colorAccent" />
 
 
         </android.support.v7.widget.GridLayout>

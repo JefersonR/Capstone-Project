@@ -7,4 +7,13 @@
         <item>3km</item>
         <item>5km</item>
     </string-array>
+
+    <string-array name="times">
+        <item>30 min</item>
+        <item>1 hora</item>
+        <item>1:30 min</item>
+        <item>2 horas</item>
+        <item>3 horas</item>
+        <item>5 horas</item>
+    </string-array>
 </resources>

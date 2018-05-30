@@ -78,6 +78,7 @@ public class RegisterAlarmActivity extends BaseActivity {
     Button btnSave;
     private int PLACE_PICKER_REQUEST = 1;
     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
     @Override
     protected void setLayout(View view) {
 
@@ -120,7 +121,7 @@ public class RegisterAlarmActivity extends BaseActivity {
 
     @OnClick(R.id.btn_my_places)
     public void setBtnMyPlaces(View view) {
-         startActivity(new Intent(this,MyPlacesActivity.class));
+        startActivity(new Intent(this, MyPlacesActivity.class));
     }
 
     @OnClick(R.id.tv_date_start)
@@ -135,13 +136,13 @@ public class RegisterAlarmActivity extends BaseActivity {
 
     @OnClick(R.id.tv_hour_end)
     public void setTvHourEnd(View view) {
-        setHour(tvHourEnd);
+        numberPickershow(false, getResources().getStringArray(R.array.times));
     }
 
 
     @OnClick(R.id.btn_distance)
     public void setbtnDistance(View view) {
-        numberPickershow();
+        numberPickershow(true, getResources().getStringArray(R.array.distances));
     }
 
     @OnClick(R.id.btn_mark_all)
@@ -168,14 +169,11 @@ public class RegisterAlarmActivity extends BaseActivity {
         toggleButton7.setChecked(false);
     }
 
-    public void numberPickershow() {
+    public void numberPickershow(final boolean isDistance, final String[] values) {
         final Dialog dialog = new Dialog(this, R.style.DateDialog);
         dialog.setTitle(R.string.title_distance);
         dialog.setContentView(R.layout.number_picker_dialog);
         Button aply = (Button) dialog.findViewById(R.id.apply_button);
-
-        final String[] values = getResources().getStringArray(R.array.distances);
-
         final NumberPicker np = (NumberPicker) dialog.findViewById(R.id.number_picker);
         np.setMaxValue(values.length - 1);
         np.setMinValue(0);
@@ -190,7 +188,11 @@ public class RegisterAlarmActivity extends BaseActivity {
         aply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnDistance.setText(String.format(getString(R.string.label_distance_edit), values[np.getValue()]));
+                if (isDistance) {
+                    btnDistance.setText(String.format(getString(R.string.label_distance_edit), values[np.getValue()]));
+                } else {
+                    tvHourEnd.setText(values[np.getValue()]);
+                }
                 dialog.dismiss();
             }
         });

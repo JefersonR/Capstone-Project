@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,15 +36,26 @@ public class PlacesFragment extends BaseFragment {
     TextView txtNothing;
     @BindView(R.id.progress)
     ProgressBar progress;
-
+    public static final String IS_CHOICE = "is_choice";
 
 
     private CountDownTimer countDownTimer;
 
     public static PlacesFragment newInstance() {
-        return new PlacesFragment();
+        PlacesFragment placesFragment = new PlacesFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(IS_CHOICE, false);
+        placesFragment.setArguments(bundle);
+        return placesFragment;
     }
 
+    public static PlacesFragment newInstance(boolean isChoice) {
+        PlacesFragment placesFragment = new PlacesFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(IS_CHOICE, isChoice);
+        placesFragment.setArguments(bundle);
+        return placesFragment;
+    }
 
     @Override
     protected void setLayout(View view) {

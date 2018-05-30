@@ -26,7 +26,7 @@
     <string name="label_date_start">A partir de</string>
     <string name="label_date_end">Data final</string>
     <string name="label_interval_start">Início intervalo</string>
-    <string name="label_interval_end">Final intervalo</string>
+    <string name="label_interval_end">Intervalo de</string>
     <string name="label_hint_date">00/00/00</string>
     <string name="label_hint_hour">00:00</string>
     <string name="label_define_place">Defina um lugar</string>
@@ -38,4 +38,6 @@
     <string name="title_new_alarm">Configurar Alarme</string>
     <string name="label_confirm">Confirmar</string>
     <string name="title_distance">Distância</string>
+
+    <string name="str_query_contains">Select * from %s where %s = %s</string>
 </resources>
