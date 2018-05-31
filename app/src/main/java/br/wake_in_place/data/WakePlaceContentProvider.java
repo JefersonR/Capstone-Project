@@ -9,14 +9,11 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import br.wake_in_place.R;
-
-
 /**
- * Created by Jeferson on 17/03/2018.
+ * Created by Jeferson on 30/05/2018.
  */
 
-public class MoviesContentProvider extends ContentProvider {
+public class WakePlaceContentProvider extends ContentProvider {
     private WakePlaceDB wakePlaceDB;
 
     @Override
@@ -30,10 +27,14 @@ public class MoviesContentProvider extends ContentProvider {
     public String getType(@NonNull Uri uri) {
         final int match = WakePlaceDBContract.URI_MATCHER.match(uri);
         switch (match) {
-            case WakePlaceDBContract.Movie.PATH_TOKEN:
-                return WakePlaceDBContract.Movie.CONTENT_TYPE_DIR;
-            case WakePlaceDBContract.Movie.PATH_FOR_ID_TOKEN:
-                return WakePlaceDBContract.Movie.CONTENT_ITEM_TYPE;
+            case WakePlaceDBContract.AlarmsBD.PATH_TOKEN:
+                return WakePlaceDBContract.AlarmsBD.CONTENT_TYPE_DIR;
+            case WakePlaceDBContract.AlarmsBD.PATH_FOR_ID_TOKEN:
+                return WakePlaceDBContract.AlarmsBD.CONTENT_ITEM_TYPE;
+            case WakePlaceDBContract.PlacesBD.PATH_TOKEN:
+                return WakePlaceDBContract.PlacesBD.CONTENT_TYPE_DIR;
+            case WakePlaceDBContract.PlacesBD.PATH_FOR_ID_TOKEN:
+                return WakePlaceDBContract.PlacesBD.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("URI " + uri + " is not supported.");
         }
@@ -44,11 +45,17 @@ public class MoviesContentProvider extends ContentProvider {
         SQLiteDatabase db = wakePlaceDB.getWritableDatabase();
         int token = WakePlaceDBContract.URI_MATCHER.match(uri);
         switch (token) {
-            case WakePlaceDBContract.Movie.PATH_TOKEN: {
-                long id = db.insert(WakePlaceDBContract.Movie.NAME, null, values);
+            case WakePlaceDBContract.AlarmsBD.PATH_TOKEN: {
+                long id = db.insert(WakePlaceDBContract.AlarmsBD.NAME, null, values);
                 if (getContext() != null)
                     getContext().getContentResolver().notifyChange(uri, null);
-                return WakePlaceDBContract.Movie.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+                return WakePlaceDBContract.AlarmsBD.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+            }
+            case WakePlaceDBContract.PlacesBD.PATH_TOKEN: {
+                long id = db.insert(WakePlaceDBContract.PlacesBD.NAME, null, values);
+                if (getContext() != null)
+                    getContext().getContentResolver().notifyChange(uri, null);
+                return WakePlaceDBContract.PlacesBD.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
             }
             default: {
                 throw new UnsupportedOperationException("URI: " + uri + " not supported.");
@@ -63,9 +70,14 @@ public class MoviesContentProvider extends ContentProvider {
         final int match = WakePlaceDBContract.URI_MATCHER.match(uri);
         switch (match) {
             // retrieve movie list
-            case WakePlaceDBContract.Movie.PATH_TOKEN: {
+            case WakePlaceDBContract.AlarmsBD.PATH_TOKEN: {
                 SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-                builder.setTables(WakePlaceDBContract.Movie.NAME);
+                builder.setTables(WakePlaceDBContract.AlarmsBD.NAME);
+                return builder.query(db, null, null, null, null, null, null);
+            }
+            case WakePlaceDBContract.PlacesBD.PATH_TOKEN: {
+                SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+                builder.setTables(WakePlaceDBContract.PlacesBD.NAME);
                 return builder.query(db, null, null, null, null, null, null);
             }
             default:
@@ -85,18 +97,26 @@ public class MoviesContentProvider extends ContentProvider {
         final int match = WakePlaceDBContract.URI_MATCHER.match(uri);
         int deleteCount = 0;
         switch (match) {
-            case WakePlaceDBContract.Movie.PATH_TOKEN: {
-                deleteCount = db.delete(WakePlaceDBContract.Movie.NAME, WakePlaceDBContract.Movie.Cols.MOVIE_ID + "="
+            case WakePlaceDBContract.AlarmsBD.PATH_TOKEN: {
+                deleteCount = db.delete(WakePlaceDBContract.AlarmsBD.NAME, WakePlaceDBContract.AlarmsBD.Cols.ID + "="
                         + selection, null);
                 if (getContext() != null)
                     getContext().getContentResolver().notifyChange(uri, null);
+                break;
+            }
+            case WakePlaceDBContract.PlacesBD.PATH_TOKEN: {
+                deleteCount = db.delete(WakePlaceDBContract.PlacesBD.NAME, WakePlaceDBContract.PlacesBD.Cols.ID + "="
+                        + selection, null);
+                if (getContext() != null)
+                    getContext().getContentResolver().notifyChange(uri, null);
+                break;
             }
         }
         return deleteCount;
     }
 
 
-    public boolean contains(String movieID, Context context) {
+   /* public boolean contains(String movieID, Context context) {
         wakePlaceDB = new WakePlaceDB(context);
         SQLiteDatabase db = wakePlaceDB.getWritableDatabase();
         String Query = String.format(context.getString(R.string.str_query_contains), WakePlaceDBContract.Movie.NAME, WakePlaceDBContract.Movie.Cols.MOVIE_ID, movieID);
@@ -107,5 +127,5 @@ public class MoviesContentProvider extends ContentProvider {
         }
         cursor.close();
         return true;
-    }
+    }*/
 }

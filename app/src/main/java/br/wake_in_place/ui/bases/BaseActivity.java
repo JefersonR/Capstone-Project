@@ -43,7 +43,7 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_base);
         init();
-        setLayout(myView());
+        myView();
         startProperties();
         defineListeners();
         toolbarController(isHasToolbar());
@@ -311,8 +311,6 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
     public void setNavigationToolbar(boolean navigationToolbar) {
         this.navigationToolbar = navigationToolbar;
     }
-
-    protected abstract void setLayout(View view);
 
     protected abstract void startProperties();
 

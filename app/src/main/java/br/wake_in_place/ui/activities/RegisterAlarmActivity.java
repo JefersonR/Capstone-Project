@@ -79,10 +79,6 @@ public class RegisterAlarmActivity extends BaseActivity {
     private int PLACE_PICKER_REQUEST = 1;
     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
-    @Override
-    protected void setLayout(View view) {
-
-    }
 
     @Override
     protected void startProperties() {

@@ -43,7 +43,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.CardChange
     @Override
     public void onBindViewHolder(final CardChangesViewHolder holder, int i) {
 
-        if (cardViewListItems.get(holder.getAdapterPosition()) != null) {
+        if (cardViewListItems!= null && cardViewListItems.get(holder.getAdapterPosition()) != null) {
             final PlaceItem item = cardViewListItems.get(holder.getAdapterPosition());
             holder.tvAddress.setText(item.getPlace());
         }

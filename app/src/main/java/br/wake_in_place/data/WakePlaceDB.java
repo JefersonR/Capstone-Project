@@ -19,38 +19,37 @@ public class WakePlaceDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " +
-                WakePlaceDBContract.Movie.NAME+ " ( " +
-                WakePlaceDBContract.Movie.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                WakePlaceDBContract.Movie.Cols.MOVIE_ID  + " TEXT UNIQUE," +
-                WakePlaceDBContract.Movie.Cols.TITLE + " TEXT NOT NULL, " +
-                WakePlaceDBContract.Movie.Cols.ORIGINAL_TITLE 	+ " TEXT , " +
-                WakePlaceDBContract.Movie.Cols.RELEASE_DATE + " TEXT, " +
-                WakePlaceDBContract.Movie.Cols.LANGUAGE + " TEXT, " +
-                WakePlaceDBContract.Movie.Cols.POSTER + " TEXT, " +
-                WakePlaceDBContract.Movie.Cols.PLOT + " TEXT, " +
-                WakePlaceDBContract.Movie.Cols.VOTE_AVERAGE + " DOUBLE, " +
-                "UNIQUE (" + WakePlaceDBContract.Movie.Cols.ID + ") ON CONFLICT REPLACE)"
+                WakePlaceDBContract.AlarmsBD.NAME+ " ( " +
+                WakePlaceDBContract.AlarmsBD.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                WakePlaceDBContract.AlarmsBD.Cols.DATE + " TEXT NOT NULL, " +
+                WakePlaceDBContract.AlarmsBD.Cols.HOUR + " TEXT NOT NULL, " +
+                WakePlaceDBContract.AlarmsBD.Cols.INTERVAL 	+ " INTEGER , " +
+                WakePlaceDBContract.AlarmsBD.Cols.REPEAT_DAYS + " TEXT, " +
+                WakePlaceDBContract.AlarmsBD.Cols.PLACE_ID + " INTEGER, " +
+                WakePlaceDBContract.AlarmsBD.Cols.RADIUS + " DOUBLE, " +
+                "UNIQUE (" + WakePlaceDBContract.AlarmsBD.Cols.ID + ") ON CONFLICT REPLACE)"
         );
-      /*  db.execSQL("CREATE TABLE " +
-                WakePlaceDBContract.Movie.NAME+ " ( " +
-                WakePlaceDBContract.Movie.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                WakePlaceDBContract.Movie.Cols.MOVIE_ID  + " TEXT UNIQUE," +
-                WakePlaceDBContract.Movie.Cols.TITLE + " TEXT NOT NULL, " +
-                WakePlaceDBContract.Movie.Cols.ORIGINAL_TITLE 	+ " TEXT , " +
-                WakePlaceDBContract.Movie.Cols.RELEASE_DATE + " TEXT, " +
-                WakePlaceDBContract.Movie.Cols.LANGUAGE + " TEXT, " +
-                WakePlaceDBContract.Movie.Cols.POSTER + " TEXT, " +
-                WakePlaceDBContract.Movie.Cols.PLOT + " TEXT, " +
-                WakePlaceDBContract.Movie.Cols.VOTE_AVERAGE + " DOUBLE, " +
-                "UNIQUE (" + WakePlaceDBContract.Movie.Cols.ID + ") ON CONFLICT REPLACE)"
-        );*/
+
+
+        db.execSQL("CREATE TABLE " +
+                WakePlaceDBContract.PlacesBD.NAME+ " ( " +
+                WakePlaceDBContract.PlacesBD.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                WakePlaceDBContract.PlacesBD.Cols.ADDRESS  + " TEXT UNIQUE," +
+                WakePlaceDBContract.PlacesBD.Cols.ADDRESS_ID  + " TEXT UNIQUE," +
+                WakePlaceDBContract.PlacesBD.Cols.ADDRESS_IMG 	+ " TEXT , " +
+                WakePlaceDBContract.PlacesBD.Cols.LATITUDE + " DOUBLE, " +
+                WakePlaceDBContract.PlacesBD.Cols.LONGITUDE + " DOUBLE, " +
+                "UNIQUE (" + WakePlaceDBContract.PlacesBD.Cols.ID + ") ON CONFLICT REPLACE)"
+        );
+
     }
 
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if(oldVersion < newVersion){
-            db.execSQL("DROP TABLE IF EXISTS " + WakePlaceDBContract.Movie.NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + WakePlaceDBContract.AlarmsBD.NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + WakePlaceDBContract.PlacesBD.NAME);
             onCreate(db);
         }
     }

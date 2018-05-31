@@ -47,11 +47,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.activities.MyPlacesActivity"/>
         <provider
-            android:name=".data.MoviesContentProvider"
-            android:authorities="udacity.contentprovider.wake"
-            android:exported="false" />
-        <provider
-            android:name=".data.PlacesContentProvider"
+            android:name=".data.WakePlaceContentProvider"
             android:authorities="udacity.contentprovider.wake"
             android:exported="false" />
     </application>

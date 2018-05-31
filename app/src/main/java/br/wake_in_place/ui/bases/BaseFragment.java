@@ -50,7 +50,7 @@ public abstract class BaseFragment<T> extends Fragment implements Constants {
         super.onActivityCreated(savedInstanceState);
         session = new SessionManager(getActivity());
         setController(getControllerImpl());
-        setLayout(getmView());
+
         startProperties();
         defineListeners();
     }
@@ -78,8 +78,6 @@ public abstract class BaseFragment<T> extends Fragment implements Constants {
     private void setController(T controller) {
         this.controller = controller;
     }
-
-    protected abstract void setLayout(View view);
 
     protected abstract void startProperties();
 

@@ -1,5 +1,7 @@
 package br.wake_in_place.ui.activities;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -12,9 +14,10 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
@@ -22,9 +25,11 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 
 import br.wake_in_place.R;
 import br.wake_in_place.controllers.mainImpl.MainImpl;
+import br.wake_in_place.data.WakePlaceDBContract;
 import br.wake_in_place.ui.bases.BaseActivity;
 import br.wake_in_place.ui.fragments.alarm.AlarmFragment;
 import br.wake_in_place.ui.fragments.places.PlacesFragment;
+import butterknife.BindView;
 
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -32,16 +37,22 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
     int PLACE_PICKER_REQUEST = 1;
     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
-    private TabLayout tabLayout;
-    private FloatingActionButton fab;
     private AlarmFragment alarmFragment;
     private PlacesFragment placesFragment;
 
+    private ContentResolver contentResolver;
+
+    @BindView(R.id.container)
+    ViewPager mViewPager;
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
 
     @Override
-    protected void setLayout(View view) {
-        setToolbar( R.id.toolbar,false,"Wake in Place");
+    protected void startProperties() {
+        setToolbar(R.id.toolbar, false, "Wake in Place");
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mGoogleApiClient = new GoogleApiClient
@@ -50,19 +61,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-
+        contentResolver = this.getContentResolver();
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        // Set up the ViewPager with the sections adapter.
-        ViewPager mViewPager = (ViewPager) fid(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        TabLayout tabLayout = (TabLayout) fid(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        fab = (FloatingActionButton) fid(R.id.fab);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
 
-    }
-
-    @Override
-    protected void startProperties() {
     }
 
     @Override
@@ -76,12 +79,12 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
                         Log.e("TESTE");*//**//*
                     }
                 });*/
-                startActivity(new Intent(MainActivity.this, RegisterAlarmActivity.class));
-            /*    try {
+//                startActivity(new Intent(MainActivity.this, RegisterAlarmActivity.class));
+                try {
                     startActivityForResult(builder.build(MainActivity.this), PLACE_PICKER_REQUEST);
                 } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
-                }*/
+                }
             }
         });
 
@@ -140,7 +143,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
                 case 0:
                     return alarmFragment != null ? alarmFragment : AlarmFragment.newInstance();
                 case 1:
-                    return placesFragment != null ? placesFragment :  PlacesFragment.newInstance();
+                    return placesFragment != null ? placesFragment : PlacesFragment.newInstance();
                 default:
                     return null;
             }
@@ -172,9 +175,18 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, this);
-                String toastMsg = String.format("Place: %s", place.getName());
-                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+                savePlace(place);
             }
         }
+    }
+
+    private void savePlace(Place place) {
+        ContentValues val = new ContentValues();
+        val.put(WakePlaceDBContract.PlacesBD.Cols.ADDRESS_ID, place.getId());
+        val.put(WakePlaceDBContract.PlacesBD.Cols.ADDRESS, (String) place.getAddress());
+        val.put(WakePlaceDBContract.PlacesBD.Cols.ADDRESS_IMG, (String) place.getName());
+        val.put(WakePlaceDBContract.PlacesBD.Cols.LATITUDE, place.getLatLng().latitude);
+        val.put(WakePlaceDBContract.PlacesBD.Cols.LONGITUDE, place.getLatLng().longitude);
+        contentResolver.insert(WakePlaceDBContract.PlacesBD.CONTENT_URI, val);
     }
 }

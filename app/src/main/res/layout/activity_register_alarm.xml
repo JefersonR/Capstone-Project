@@ -134,7 +134,7 @@
                 android:focusable="true"
                 android:foreground="?android:selectableItemBackground"
                 android:gravity="start|center_vertical"
-                android:text="1 hora"
+                android:text="@string/label_hour_init"
                 android:textColor="@color/colorAccent" />
 
 

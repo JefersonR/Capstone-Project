@@ -2,7 +2,6 @@ package br.wake_in_place.ui.activities;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
-import android.view.View;
 
 import br.wake_in_place.R;
 import br.wake_in_place.ui.bases.BaseActivityForFragment;
@@ -26,10 +25,6 @@ public class MyPlacesActivity extends BaseActivityForFragment {
         return null;
     }
 
-    @Override
-    protected void setLayout(View view) {
-
-    }
 
     @Override
     protected void defineListeners() {
