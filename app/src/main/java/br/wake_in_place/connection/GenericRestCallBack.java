@@ -12,7 +12,10 @@ import br.wake_in_place.connection.interfaces.OnErrorServer;
 import br.wake_in_place.connection.interfaces.OnSucess;
 import br.wake_in_place.models.ErrorResponse;
 import br.wake_in_place.utils.ConnectionChecker;
+import br.wake_in_place.utils.DialogCustomUtil;
+import br.wake_in_place.utils.DialogSingleton;
 import br.wake_in_place.utils.Log;
+import br.wake_in_place.utils.Snackbar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,7 +35,6 @@ public class GenericRestCallBack<T> implements Callback<T> {
     private Call<T> mCall;
     private boolean isBlocked;
     private ProgressDialog progressDialog;
-
 
     private Context getContext() {
         return mContext;
@@ -58,6 +60,13 @@ public class GenericRestCallBack<T> implements Callback<T> {
 
     public void request(Context context, Call<T> call, OnSucess onSucessListener, boolean isBlocked) {
         this.onSucessListener = onSucessListener;
+        this.isBlocked = isBlocked;
+        doRequestBlock(context, call);
+    }
+
+    public void request(Context context, Call<T> call, OnSucess onSucessListener, OnError onErrorListener, boolean isBlocked) {
+        this.onSucessListener = onSucessListener;
+        this.onErrorListener = onErrorListener;
         this.isBlocked = isBlocked;
         doRequestBlock(context, call);
     }
@@ -192,28 +201,31 @@ public class GenericRestCallBack<T> implements Callback<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onResponse(Call<T> call, Response<T> response) {
-        if (response.isSuccessful()) {
-            txtNothing(false);
-            if (onSucessListener != null) {
-                onSucessListener.onSucessResponse(response);
-            }
-        } else {
-            txtNothing(true);
-            if (onErrorListener != null) {
-                onErrorListener.onErrorResponse(ErrorResponse.getResponseError(response.errorBody(), response.code()));
-            } else if (onErrorServer != null) {
-                onErrorServer.onErrorResponse(response.errorBody());
+        try {
+            if (response.isSuccessful()) {
+                txtNothing(false);
+                if (onSucessListener != null) {
+                    onSucessListener.onSucessResponse(response);
+                }
             } else {
-                errorResponse(response);
-                Log.e("ERROR", response.errorBody().toString());
-            }
+                txtNothing(true);
+                if (onErrorListener != null) {
+                    onErrorListener.onErrorResponse(ErrorResponse.getResponseError(response.errorBody(), response.code()));
+                } else if (onErrorServer != null) {
+                    onErrorServer.onErrorResponse(response.errorBody());
+                } else {
+                    errorResponse(response);
+                    Log.e(response.errorBody().toString());
+                }
 
+            }
+            progressBar(false);
+            setProgressdialog(false);
+        }catch (Exception e){
+            Log.e(e.getMessage()!= null?e.getMessage():"Error");
         }
-        progressBar(false);
-        setProgressdialog(false);
 
     }
 
@@ -223,16 +235,9 @@ public class GenericRestCallBack<T> implements Callback<T> {
         setProgressdialog(false);
         txtNothing(true);
         if (onErrorListener != null) {
-            onErrorListener.onErrorResponse(null);
-        } else if (onErrorServer != null) {
-            onErrorServer.onErrorResponse(null);
+            onErrorListener.onErrorResponse(new ErrorResponse());
         } else {
             errorResponse(null);
-        }
-        try {
-            Log.e(t.getMessage());
-        } catch (Exception e) {
-            e.getMessage();
         }
     }
 
@@ -250,35 +255,34 @@ public class GenericRestCallBack<T> implements Callback<T> {
         }
     }
 
-
     private void onError(ErrorResponse error) {
-     /*   DialogCustomUtil.OnItemClick onItemClickRepeat = new DialogCustomUtil.OnItemClick() {
+        DialogCustomUtil.OnItemClick onItemClickRepeat = new DialogCustomUtil.OnItemClick() {
             @Override
             public void onItemClick(View view) {
                 requestLastCall();
             }
-        };*/
-      /*  if (error.getCode() != null) {
+        };
+        if (error.getCode() != null) {
             switch (error.getCode()) {
                 case ErrorResponse.UPDATE_VERSION:
-                    DialogSingleton.getInstance().dialog(getContext(), "Atualização", error.getMessage(), false, null);
+                    DialogSingleton.getInstance().dialog(getContext(), ErrorResponse.UPDATE_VERSION_TITLE, error.getMessage(), false, null);
                     break;
                 case ErrorResponse.UNEXPECTED:
-                    DialogSingleton.getInstance().dialog(getContext(), "Erro", error.getMessageServer(), true, onItemClickRepeat);
+                    DialogSingleton.getInstance().dialog(getContext(), ErrorResponse.UNEXPECTED_TITLE, error.getMessageServer(), true, onItemClickRepeat);
                     break;
                 case ErrorResponse.NETWORK_DISABLE:
-                    DialogSingleton.getInstance().dialog(getContext(), "Conexão", error.getMessage(), false, null);
+                    DialogSingleton.getInstance().dialog(getContext(), ErrorResponse.NETWORK_DISABLE_TITLE, error.getMessage(), false, null);
                     break;
                 case ErrorResponse.SESSION:
-                    DialogSingleton.getInstance().dialog(getContext(), "Sessão expirada", error.getMessage(), new DialogCustomUtil.OnItemClick() {
+                    DialogSingleton.getInstance().dialog(getContext(), ErrorResponse.SESSION_TITLE, error.getMessage(), new DialogCustomUtil.OnItemClick() {
                         @Override
                         public void onItemClick(View view) {
-                            //clearInfo
+                            //logout
                         }
                     });
                     break;
                 case ErrorResponse.FAIL:
-                    DialogSingleton.getInstance().dialog(getContext(), "Falha", error.getMessage(), true, onItemClickRepeat);
+                    DialogSingleton.getInstance().dialog(getContext(), ErrorResponse.FAIL_TITLE, error.getMessage(), true, onItemClickRepeat);
                     break;
                 default:
                     Snackbar.make(getContext(), error.getMessage());
@@ -286,8 +290,9 @@ public class GenericRestCallBack<T> implements Callback<T> {
             }
         } else {
             Snackbar.make(getContext(), error.getMessage());
-        }*/
+        }
     }
+
 
 
 }

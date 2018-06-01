@@ -19,11 +19,12 @@
 
     <TextView
         android:id="@+id/txt_nothing"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginTop="100dp"
-        android:text="@string/label_no_alarm"
+        android:text="@string/label_no_places"
+        android:gravity="center"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:textSize="16sp"
         android:textStyle="bold"
         android:visibility="gone" />

@@ -45,7 +45,6 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
         init();
         myView();
         startProperties();
-        defineListeners();
         toolbarController(isHasToolbar());
     }
 
@@ -314,7 +313,6 @@ public abstract class BaseActivity<T> extends AppCompatActivity implements Const
 
     protected abstract void startProperties();
 
-    protected abstract void defineListeners();
 
     protected abstract
     @LayoutRes

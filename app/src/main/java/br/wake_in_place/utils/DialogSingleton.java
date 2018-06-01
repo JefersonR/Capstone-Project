@@ -1,7 +1,7 @@
 package br.wake_in_place.utils;
 
 import android.app.Dialog;
-
+import android.content.Context;
 
 
 /**
@@ -22,7 +22,7 @@ public class DialogSingleton {
      * Método estático de acesso único ao objeto
      * @return instância de MeuSingleton
      */
-   public static DialogSingleton getInstance(){
+    public static DialogSingleton getInstance(){
 
         if(instance == null)
         {
@@ -46,7 +46,7 @@ public class DialogSingleton {
         }
     }
 
- /*   public Dialog dialog(Context context, String Title, String message, boolean tryAgain, DialogCustomUtil.OnItemClick onItemClick) {
+    public Dialog dialog(Context context, String Title, String message, boolean tryAgain, DialogCustomUtil.OnItemClick onItemClick) {
         try {
             dismiss();
             if (tryAgain) {
@@ -76,6 +76,6 @@ public class DialogSingleton {
             dialog.dismiss();
         }
     }
-*/
+
 
 }

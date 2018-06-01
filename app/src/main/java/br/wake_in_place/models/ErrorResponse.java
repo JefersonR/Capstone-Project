@@ -7,19 +7,32 @@ import okhttp3.ResponseBody;
 
 public class ErrorResponse {
     public static final String UPDATE_VERSION = "111";
+    public static final String UPDATE_VERSION_TITLE = "Atualização";
     public static final String NETWORK_DISABLE = "222";
+    public static final String NETWORK_DISABLE_TITLE = "Conexão";
     public static final String UNEXPECTED = "333";
+    public static final String UNEXPECTED_TITLE = "Erro";
     public static final String SESSION = "444";
+    public static final String SESSION_TITLE = "Sessão expirada";
     public static final String FAIL = "555";
+    public static final String FAIL_TITLE = "Falha";
+    private static String verifyConnection = "Verifique sua conexão e tente novamente.";
+    private static String errorSession = "Sua sessão expirou. Por favor, faça o login novamente.";
+    private static String errorMsg = "Ocorreu um erro inesperado. Por favor, tente novamente.";
+    private static String errorJson = "Error to parse Gson";
+    private static String errorProcessing = "Desculpe-nos, não foi possível processar a sua solicitação no momento.";
+    private static String errorUpdateVersion = "A versão do seu aplicativo está desatualizada. Clique no botão abaixo para atualizar.";
 
     @Expose
-    private String code;
+    private String code = "";
     @Expose
     private int codeServer = 0;
     @Expose
-    private String message;
+    private String message = errorMsg;
     @Expose
-    private String messageServer = "";
+    private String messageServer = errorMsg;
+
+
 
 
 
@@ -60,7 +73,7 @@ public class ErrorResponse {
     public static  ErrorResponse NETWORK_ERROR() {
         final ErrorResponse error = new ErrorResponse();
         error.code = NETWORK_DISABLE;
-        error.message = "Verifique sua conexão e tente novamente.";
+        error.message = verifyConnection;
         return error;
     }
 
@@ -68,14 +81,15 @@ public class ErrorResponse {
         ErrorResponse error;
         try {
             error = new Gson().fromJson(responseBody.string(), ErrorResponse.class);
+            error.setMessageServer(error.getMessage());
         } catch (Exception e) {
             error = getGsonParseError();
         }
         if (error == null) {
             error = new ErrorResponse();
             error.setCode(ErrorResponse.UNEXPECTED);
-            error.setMessageServer("Ocorreu um erro inesperado. Por favor, tente novamente.");
-            error.setMessage("Ocorreu um erro inesperado. Por favor, tente novamente.");
+            error.setMessageServer(errorMsg);
+            error.setMessage(errorMsg);
         }
         error.setCodeServer(serverCode);
         return error;
@@ -85,41 +99,16 @@ public class ErrorResponse {
 
     public static  ErrorResponse getGsonParseError() {
         final ErrorResponse error = new ErrorResponse();
-        error.setCode("Error to parse Gson");
-        error.setMessage("Desculpe-nos, não foi possível processar a sua solicitação no momento.");
-        error.setMessageServer("Desculpe-nos, não foi possível processar a sua solicitação no momento.");
-        return error;
-    }
-
-    public static  ErrorResponse getConnectionError() {
-        final ErrorResponse error = new ErrorResponse();
-        error.setCode(UNEXPECTED);
-        error.setMessage("Você não está conectado, por favor tente novamente mais tarde.");
-        error.setMessageServer("Você não está conectado, por favor tente novamente mais tarde.");
-        return error;
-    }
-    public static ErrorResponse getExceptionError(final ResponseBody responseBody) {
-        final ErrorResponse error = new ErrorResponse();
-        error.setCode(UNEXPECTED);
-        error.setMessage("Desculpe-nos, não foi possível processar a sua solicitação no momento.");
-        ErrorResponse errorServer;
-        try {
-            if(responseBody != null) {
-                errorServer = new Gson().fromJson(responseBody.string(), ErrorResponse.class);
-                error.setMessageServer(errorServer.message);
-            }else{
-                error.setMessageServer("Desculpe-nos, não foi possível processar a sua solicitação no momento.");
-            }
-        } catch (Exception e) {
-            error.setMessageServer("Desculpe-nos, não foi possível processar a sua solicitação no momento.");
-        }
+        error.setCode(errorJson);
+        error.setMessage(errorProcessing);
+        error.setMessageServer(errorProcessing);
         return error;
     }
 
     public static ErrorResponse getExceptionFail(final ResponseBody responseBody, int serverCode) {
         final ErrorResponse error = new ErrorResponse();
         error.setCode(UNEXPECTED);
-        error.setMessage("Desculpe-nos, não foi possível processar a sua solicitação no momento.");
+        error.setMessage(errorProcessing);
         ErrorResponse errorServer;
         try {
             if(responseBody != null) {
@@ -127,10 +116,10 @@ public class ErrorResponse {
                 error.setMessageServer(errorServer.message);
 
             }else{
-                error.setMessageServer("Desculpe-nos, não foi possível processar a sua solicitação no momento.");
+                error.setMessageServer(errorProcessing);
             }
         } catch (Exception e) {
-            error.setMessageServer("Desculpe-nos, não foi possível processar a sua solicitação no momento.");
+            error.setMessageServer(errorProcessing);
         }
         error.setCodeServer(serverCode);
         return error;
@@ -139,8 +128,8 @@ public class ErrorResponse {
     public static ErrorResponse getUpdateApplicationError() {
         final ErrorResponse error = new ErrorResponse();
         error.setCode(UPDATE_VERSION);
-        error.setMessage("A versão do seu aplicativo está desatualizada. Clique no botão abaixo para atualizar.");
-        error.setMessageServer("A versão do seu aplicativo está desatualizada. Clique no botão abaixo para atualizar.");
+        error.setMessage(errorUpdateVersion);
+        error.setMessageServer(errorUpdateVersion);
         return error;
     }
 
@@ -152,25 +141,14 @@ public class ErrorResponse {
                 errorServer = new Gson().fromJson(responseBody.string(), ErrorResponse.class);
                 error.setMessageServer(errorServer.message);
             }else{
-                error.setMessageServer("Sua sessão expirou. Por favor, faça o login novamente.");
+                error.setMessageServer(errorSession);
             }
         } catch (Exception e) {
-            error.setMessageServer("Sua sessão expirou. Por favor, faça o login novamente.");
+            error.setMessageServer(errorSession);
         }
         error.setCode(SESSION);
-        error.setMessage("Sua sessão expirou. Por favor, faça o login novamente.");
+        error.setMessage(errorSession);
         error.setCodeServer(serverCode);
         return error;
     }
-
-    @Override
-    public String toString() {
-        return "ErrorResponse{" +
-                "code='" + code + '\'' +
-                ", codeServer='" + codeServer + '\'' +
-                ", message='" + message + '\'' +
-                ", messageServer='" + messageServer + '\'' +
-                '}';
-    }
 }
-

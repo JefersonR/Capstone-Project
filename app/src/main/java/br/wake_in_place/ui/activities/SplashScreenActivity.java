@@ -18,7 +18,6 @@ public class SplashScreenActivity extends BaseActivity {
     private ImageView logo;
     private ProgressBar progressBar;
     private final int animation_time = 1000;
-    private static final String TAG = "Alarme";
 
     protected void startProperties() {
         setHasToolbar(false);
@@ -36,7 +35,6 @@ public class SplashScreenActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -51,10 +49,6 @@ public class SplashScreenActivity extends BaseActivity {
         logo.setAnimation(animation);
     }
 
-    @Override
-    protected void defineListeners() {
-
-    }
 
     @Override
     protected int getActivityLayout() {

@@ -25,11 +25,14 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 
 import br.wake_in_place.R;
 import br.wake_in_place.controllers.mainImpl.MainImpl;
+import br.wake_in_place.data.WakePlaceContentProvider;
 import br.wake_in_place.data.WakePlaceDBContract;
 import br.wake_in_place.ui.bases.BaseActivity;
 import br.wake_in_place.ui.fragments.alarm.AlarmFragment;
 import br.wake_in_place.ui.fragments.places.PlacesFragment;
+import br.wake_in_place.utils.DialogCustomUtil;
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -49,6 +52,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
+    private boolean isAlarmPage = true;
+
 
     @Override
     protected void startProperties() {
@@ -65,29 +70,36 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
-    }
-
-    @Override
-    protected void defineListeners() {
-        fab.setOnClickListener(new View.OnClickListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onClick(View view) {
-             /*   Snackbar.make(view, "Informação", "Ação", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.e("TESTE");*//**//*
-                    }
-                });*/
-//                startActivity(new Intent(MainActivity.this, RegisterAlarmActivity.class));
-                try {
-                    startActivityForResult(builder.build(MainActivity.this), PLACE_PICKER_REQUEST);
-                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                isAlarmPage = position == 0;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
 
+    }
+
+    @OnClick(R.id.fab)
+    public void setBtnFab(View view) {
+        if (isAlarmPage) {
+            startActivity(new Intent(MainActivity.this, RegisterAlarmActivity.class));
+        } else {
+            try {
+                startActivityForResult(builder.build(MainActivity.this), PLACE_PICKER_REQUEST);
+            } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -137,13 +149,17 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
                 case 0:
-                    return alarmFragment != null ? alarmFragment : AlarmFragment.newInstance();
+                    if (alarmFragment == null) {
+                        alarmFragment = AlarmFragment.newInstance();
+                    }
+                    return alarmFragment;
                 case 1:
-                    return placesFragment != null ? placesFragment : PlacesFragment.newInstance();
+                    if (placesFragment == null) {
+                        placesFragment = PlacesFragment.newInstance();
+                    }
+                    return placesFragment;
                 default:
                     return null;
             }
@@ -175,16 +191,22 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, this);
-                savePlace(place);
+                WakePlaceContentProvider provider = new WakePlaceContentProvider();
+                if (!provider.containPlace(place.getId(), MainActivity.this)) {
+                    savePlace(place);
+                    placesFragment.updateList();
+                } else {
+                    DialogCustomUtil.dialog(MainActivity.this, getString(R.string.label_title_places_exists), getString(R.string.lavel_place_exists));
+                }
             }
         }
     }
 
     private void savePlace(Place place) {
         ContentValues val = new ContentValues();
-        val.put(WakePlaceDBContract.PlacesBD.Cols.ADDRESS_ID, place.getId());
+        val.put(WakePlaceDBContract.PlacesBD.Cols.PLACE_ID, place.getId());
         val.put(WakePlaceDBContract.PlacesBD.Cols.ADDRESS, (String) place.getAddress());
-        val.put(WakePlaceDBContract.PlacesBD.Cols.ADDRESS_IMG, (String) place.getName());
+        val.put(WakePlaceDBContract.PlacesBD.Cols.NAME, (String) place.getName());
         val.put(WakePlaceDBContract.PlacesBD.Cols.LATITUDE, place.getLatLng().latitude);
         val.put(WakePlaceDBContract.PlacesBD.Cols.LONGITUDE, place.getLatLng().longitude);
         contentResolver.insert(WakePlaceDBContract.PlacesBD.CONTENT_URI, val);

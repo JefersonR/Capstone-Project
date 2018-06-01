@@ -17,18 +17,12 @@ public class MyPlacesActivity extends BaseActivityForFragment {
 
     @Override
     protected Fragment getInitFragment() {
-        return new PlacesFragment();
+        return PlacesFragment.newInstance(true);
     }
 
     @Override
     protected Object getControllerImpl() {
         return null;
-    }
-
-
-    @Override
-    protected void defineListeners() {
-
     }
 
     @Override

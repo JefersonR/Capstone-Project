@@ -10,7 +10,8 @@
     <!--Connection-->
     <string name="connection_error">Problema com a conexão. Conecte e tente novamente!</string>
     <string name="connection_fail">Houve uma falha nos nossos servidores, tente novamente.</string>
-    <string name="label_no_alarm">Nenhuma alarme configurado no momento</string>
+    <string name="label_no_alarm">Nenhum alarme configurado no momento</string>
+    <string name="label_no_places">Você não tem nenhum lugar adicionado ainda!</string>
 
 
     <string name="label_monday">SEG</string>
@@ -37,8 +38,26 @@
     <string name="label_save">Salvar</string>
     <string name="title_new_alarm">Configurar Alarme</string>
     <string name="label_confirm">Confirmar</string>
+    <string name="label_cancel">Cancelar</string>
     <string name="title_distance">Distância</string>
 
-    <string name="str_query_contains">Select * from %s where %s = %s</string>
+    <string name="str_query_contains">Select * from %s where %s = \'%s\'</string>
     <string name="label_hour_init">1 hora</string>
+    <string name="str_size_parameter">400x400</string>
+    <string name="str_https_parameter">https</string>
+    <string name="str_authority_parameter">maps.googleapis.com</string>
+    <string name="str_maps_parameter">maps</string>
+    <string name="str_api_parameter">api</string>
+    <string name="str_staticmaps_parameter">staticmap</string>
+    <string name="str_center_parameter">center</string>
+    <string name="str_zoom_parameter">zoom</string>
+    <string name="str_size_label_parameter">size</string>
+    <string name="str_key_parameter">key</string>
+    <string name="str_lat_lng">%f,%f</string>
+    <string name="str_geo">geo:%f,%f</string>
+    <string name="lavel_place_exists">Você já adicionou este lugar</string>
+    <string name="label_title_places_exists">Ops!</string>
+    <string name="str_google_uri">com.google.android.apps.maps</string>
+    <string name="title_attention">Atenção</string>
+    <string name="label_error_dialog_alarm">Por favor preencha data e hora do seu alarme</string>
 </resources>

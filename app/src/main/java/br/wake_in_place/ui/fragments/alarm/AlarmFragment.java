@@ -43,10 +43,6 @@ public class AlarmFragment extends BaseFragment implements AlarmAdapter.AlarmLis
     @Override
     protected void startProperties() {
         List<AlarmItem> items = new ArrayList<>();
-        items.add(new AlarmItem("17:15","S T Q Q S S","Avenida Brasil, 123"));
-        items.add(new AlarmItem("18:15","S T Q Q S S","Avenida Brasil, 123"));
-        items.add(new AlarmItem("19:15","S T Q Q S S","Avenida Brasil, 123"));
-        items.add(new AlarmItem("20:15","S T Q Q S S","Avenida Brasil, 123"));
         rcAlarms.setAdapter(new AlarmAdapter(items, this));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -54,12 +50,6 @@ public class AlarmFragment extends BaseFragment implements AlarmAdapter.AlarmLis
 
     }
 
-
-    @Override
-    protected void defineListeners() {
-
-
-    }
 
     @Override
     protected int getFragmentLayout() {

@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import br.wake_in_place.R;
+
 /**
  * Created by Jeferson on 30/05/2018.
  */
@@ -98,15 +100,13 @@ public class WakePlaceContentProvider extends ContentProvider {
         int deleteCount = 0;
         switch (match) {
             case WakePlaceDBContract.AlarmsBD.PATH_TOKEN: {
-                deleteCount = db.delete(WakePlaceDBContract.AlarmsBD.NAME, WakePlaceDBContract.AlarmsBD.Cols.ID + "="
-                        + selection, null);
+                deleteCount = db.delete(WakePlaceDBContract.AlarmsBD.NAME, WakePlaceDBContract.AlarmsBD.Cols.ID + "=" + selection, null);
                 if (getContext() != null)
                     getContext().getContentResolver().notifyChange(uri, null);
                 break;
             }
             case WakePlaceDBContract.PlacesBD.PATH_TOKEN: {
-                deleteCount = db.delete(WakePlaceDBContract.PlacesBD.NAME, WakePlaceDBContract.PlacesBD.Cols.ID + "="
-                        + selection, null);
+                deleteCount = db.delete(WakePlaceDBContract.PlacesBD.NAME, WakePlaceDBContract.PlacesBD.Cols.ID + "=" + selection, null);
                 if (getContext() != null)
                     getContext().getContentResolver().notifyChange(uri, null);
                 break;
@@ -116,10 +116,10 @@ public class WakePlaceContentProvider extends ContentProvider {
     }
 
 
-   /* public boolean contains(String movieID, Context context) {
+    public boolean containPlace(String placeID, Context context) {
         wakePlaceDB = new WakePlaceDB(context);
         SQLiteDatabase db = wakePlaceDB.getWritableDatabase();
-        String Query = String.format(context.getString(R.string.str_query_contains), WakePlaceDBContract.Movie.NAME, WakePlaceDBContract.Movie.Cols.MOVIE_ID, movieID);
+        String Query = String.format(context.getString(R.string.str_query_contains), WakePlaceDBContract.PlacesBD.NAME, WakePlaceDBContract.PlacesBD.Cols.PLACE_ID, placeID);
         Cursor cursor = db.rawQuery(Query, null);
         if (cursor.getCount() <= 0) {
             cursor.close();
@@ -127,5 +127,5 @@ public class WakePlaceContentProvider extends ContentProvider {
         }
         cursor.close();
         return true;
-    }*/
+    }
 }

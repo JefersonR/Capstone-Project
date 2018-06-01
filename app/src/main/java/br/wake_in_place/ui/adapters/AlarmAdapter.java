@@ -69,7 +69,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.CardChangesV
                 });
 
                 holder.txtHour.setText(item.getHour());
-                holder.txtDays.setText(item.getDays());
+                holder.txtDays.setText(item.getRepeatDays());
                 holder.txtAddress.setText(item.getAddress());
 
             } catch (Exception e) {

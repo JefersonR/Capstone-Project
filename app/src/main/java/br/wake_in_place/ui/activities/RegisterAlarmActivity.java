@@ -3,6 +3,8 @@ package br.wake_in_place.ui.activities;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
@@ -30,9 +32,15 @@ import java.util.Locale;
 
 import br.wake_in_place.R;
 import br.wake_in_place.controllers.detailImpl.DetailImpl;
+import br.wake_in_place.data.WakePlaceDBContract;
+import br.wake_in_place.models.response.AlarmItem;
+import br.wake_in_place.models.response.PlaceItem;
 import br.wake_in_place.ui.bases.BaseActivity;
+import br.wake_in_place.utils.DialogCustomUtil;
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static br.wake_in_place.ui.fragments.places.PlacesFragment.IS_CHOICE;
 
 public class RegisterAlarmActivity extends BaseActivity {
 
@@ -77,18 +85,18 @@ public class RegisterAlarmActivity extends BaseActivity {
     @BindView(R.id.btn_save)
     Button btnSave;
     private int PLACE_PICKER_REQUEST = 1;
+    private int MY_PLACES_REQUEST = 2;
     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+    private AlarmItem alarmItem;
+    private ContentResolver contentResolver;
 
 
     @Override
     protected void startProperties() {
         setToolbar(getString(R.string.title_new_alarm));
         btnDistance.setText(String.format(getString(R.string.label_distance_edit), "500mts"));
-    }
-
-    @Override
-    protected void defineListeners() {
-
+        alarmItem = new AlarmItem();
+        contentResolver = this.getContentResolver();
     }
 
     @Override
@@ -117,7 +125,7 @@ public class RegisterAlarmActivity extends BaseActivity {
 
     @OnClick(R.id.btn_my_places)
     public void setBtnMyPlaces(View view) {
-        startActivity(new Intent(this, MyPlacesActivity.class));
+        startActivityForResult(new Intent(this, MyPlacesActivity.class), MY_PLACES_REQUEST);
     }
 
     @OnClick(R.id.tv_date_start)
@@ -133,6 +141,46 @@ public class RegisterAlarmActivity extends BaseActivity {
     @OnClick(R.id.tv_hour_end)
     public void setTvHourEnd(View view) {
         numberPickershow(false, getResources().getStringArray(R.array.times));
+    }
+
+    @OnClick(R.id.btn_save)
+    public void setBtnSave(View view) {
+        if (verifyFields()) {
+            saveAlarm(getNewAlarm());
+        }else{
+            DialogCustomUtil.dialog(this,getString(R.string.title_attention),getString(R.string.label_error_dialog_alarm));
+        }
+
+    }
+
+    private boolean verifyFields() {
+        boolean verify = true;
+        if (tvDateStart.getText().toString().isEmpty()) {
+            verify = false;
+        }
+        if (tvHourStart.getText().toString().isEmpty()) {
+            verify = false;
+        }
+        if (tvHourEnd.getText().toString().isEmpty()) {
+            verify = false;
+        }
+        if (btnDistance.getText().toString().isEmpty()) {
+            verify = false;
+        }
+        return verify;
+    }
+
+
+    private void saveAlarm(AlarmItem alarmItem) {
+        ContentValues val = new ContentValues();
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.DATE, alarmItem.getDate());
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.HOUR, alarmItem.getHour());
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.INTERVAL, alarmItem.getInterval());
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.REPEAT_DAYS, alarmItem.getRepeatDays());
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.PLACE_ID, alarmItem.getPlaceID());
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.ADDRESS, alarmItem.getAddress());
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.RADIUS, alarmItem.getRadius());
+        contentResolver.insert(WakePlaceDBContract.AlarmsBD.CONTENT_URI, val);
     }
 
 
@@ -218,12 +266,13 @@ public class RegisterAlarmActivity extends BaseActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PLACE_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(data, this);
-                String toastMsg = String.format("Place: %s", place.getName());
-                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-            }
+        if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
+            Place place = PlacePicker.getPlace(data, this);
+            String toastMsg = String.format("Place: %s", place.getName());
+            Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+        } else if (requestCode == MY_PLACES_REQUEST && resultCode == RESULT_OK) {
+            PlaceItem place = data.getParcelableExtra(IS_CHOICE);
+            Toast.makeText(this, place.getAddress(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -253,5 +302,10 @@ public class RegisterAlarmActivity extends BaseActivity {
             e.getMessage();
         }
         fromDatePickerDialog.show();
+    }
+
+    public AlarmItem getNewAlarm() {
+
+        return alarmItem;
     }
 }

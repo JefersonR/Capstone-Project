@@ -58,7 +58,7 @@
                 android:focusable="true"
                 android:foreground="?android:selectableItemBackground"
                 android:gravity="start|center_vertical"
-                android:text="@string/label_hint_date"
+                android:hint="@string/label_hint_date"
                 android:textColor="@color/gray_light" />
 
             <TextView
@@ -116,7 +116,7 @@
                 android:focusable="true"
                 android:foreground="?android:selectableItemBackground"
                 android:gravity="start|center_vertical"
-                android:text="@string/label_hint_hour"
+                android:hint="@string/label_hint_hour"
                 android:textColor="@color/gray_light" />
 
             <TextView

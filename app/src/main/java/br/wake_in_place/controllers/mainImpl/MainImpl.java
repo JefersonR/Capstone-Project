@@ -1,18 +1,11 @@
 package br.wake_in_place.controllers.mainImpl;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import java.util.List;
 
 import br.wake_in_place.connection.BaseImpl;
-import br.wake_in_place.connection.GenericRestCallBack;
-import br.wake_in_place.connection.interfaces.OnSucess;
+import br.wake_in_place.connection.interfaces.EndpointInterface;
 import br.wake_in_place.connection.interfaces.RetrofitInterface;
-import br.wake_in_place.models.response.AlarmItem;
-import br.wake_in_place.models.response.PlaceItem;
+
 
 /**
  * Created by Jeferson on 29/04/2017.
@@ -25,13 +18,13 @@ public class MainImpl extends BaseImpl implements RetrofitInterface {
         this.context = context;
     }
 
-    public void getAllOffers(OnSucess onSucessListener, View progress, TextView txtNothing){
-        new GenericRestCallBack<List<AlarmItem>>().request(getMyContext(), getApiService().getAllOffers(),onSucessListener, progress, txtNothing);
-    }
+/*    public void getStaticMap(double latitude, double longitude, OnSucess onSucessListener){
+        final String size = "400x400";
+        final String key = BuildConfig.KEY;;
+        final int zoom = 14;
 
-    public void getAllStores(OnSucess onSucessListener, ProgressBar progress, TextView txt){
-        new GenericRestCallBack<List<PlaceItem>>().request(getMyContext(), getApiService().getAllStores(),onSucessListener, progress, txt);
-    }
+        new GenericRestCallBack<String>().request(getMyContext(), getApiService().getStaticMap(latitude+","+longitude,zoom,size,key),onSucessListener, true);
+    }*/
 
     @Override
     protected Context getMyContext() {
@@ -39,7 +32,7 @@ public class MainImpl extends BaseImpl implements RetrofitInterface {
     }
 
     @Override
-    protected MainEndpoint getApiService() {
-        return retrofit.create(MainEndpoint.class);
+    protected EndpointInterface getApiService() {
+        return retrofit.create(EndpointInterface.class);
     }
 }

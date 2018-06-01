@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class WakePlaceDB extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "fav_movie.db";
+    private static final String DATABASE_NAME = "wake_place.db";
     private static final int DATABASE_VERSION = 2;
 
     public WakePlaceDB(Context ctx){
@@ -25,7 +25,8 @@ public class WakePlaceDB extends SQLiteOpenHelper {
                 WakePlaceDBContract.AlarmsBD.Cols.HOUR + " TEXT NOT NULL, " +
                 WakePlaceDBContract.AlarmsBD.Cols.INTERVAL 	+ " INTEGER , " +
                 WakePlaceDBContract.AlarmsBD.Cols.REPEAT_DAYS + " TEXT, " +
-                WakePlaceDBContract.AlarmsBD.Cols.PLACE_ID + " INTEGER, " +
+                WakePlaceDBContract.AlarmsBD.Cols.PLACE_ID + " TEXT, " +
+                WakePlaceDBContract.AlarmsBD.Cols.ADDRESS + " TEXT, " +
                 WakePlaceDBContract.AlarmsBD.Cols.RADIUS + " DOUBLE, " +
                 "UNIQUE (" + WakePlaceDBContract.AlarmsBD.Cols.ID + ") ON CONFLICT REPLACE)"
         );
@@ -34,9 +35,9 @@ public class WakePlaceDB extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " +
                 WakePlaceDBContract.PlacesBD.NAME+ " ( " +
                 WakePlaceDBContract.PlacesBD.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                WakePlaceDBContract.PlacesBD.Cols.ADDRESS  + " TEXT UNIQUE," +
-                WakePlaceDBContract.PlacesBD.Cols.ADDRESS_ID  + " TEXT UNIQUE," +
-                WakePlaceDBContract.PlacesBD.Cols.ADDRESS_IMG 	+ " TEXT , " +
+                WakePlaceDBContract.PlacesBD.Cols.ADDRESS  + " TEXT," +
+                WakePlaceDBContract.PlacesBD.Cols.NAME  + " TEXT," +
+                WakePlaceDBContract.PlacesBD.Cols.PLACE_ID  + " TEXT UNIQUE," +
                 WakePlaceDBContract.PlacesBD.Cols.LATITUDE + " DOUBLE, " +
                 WakePlaceDBContract.PlacesBD.Cols.LONGITUDE + " DOUBLE, " +
                 "UNIQUE (" + WakePlaceDBContract.PlacesBD.Cols.ID + ") ON CONFLICT REPLACE)"

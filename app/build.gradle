@@ -16,14 +16,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", "LOG", "false"
-            buildConfigField "String", "API_HOST", '"http://private-88d50-promoo.apiary-mock.com/"'
+            buildConfigField "String", "API_HOST", '"https://maps.googleapis.com/maps/api/"'
             resValue "string", "app_name", "AlarmClock"
+            buildConfigField "String", "key", "AIzaSyBpXcr-G0qNOH05et-w_mntlv6IfsAVNYs"
         }
 
         debug {
             buildConfigField "boolean", "LOG", "true"
-            buildConfigField "String", "API_HOST", '"http://private-88d50-promoo.apiary-mock.com/"'
+            buildConfigField "String", "API_HOST", '"https://maps.googleapis.com/maps/api/"'
             resValue "string", "app_name", "AlarmClock DEV"
+            buildConfigField "String", "KEY", '"AIzaSyBpXcr-G0qNOH05et-w_mntlv6IfsAVNYs"'
         }
     }
 }

@@ -48,6 +48,7 @@ public class WakePlaceDBContract {
             public static final String INTERVAL = "interval";
             public static final String REPEAT_DAYS = "repeat_days";
             public static final String PLACE_ID = "place_id";
+            public static final String ADDRESS = "address";
             public static final String RADIUS = "radius";
         }
 
@@ -68,9 +69,9 @@ public class WakePlaceDBContract {
 
         public static class Cols {
             public static final String ID = BaseColumns._ID; // convention
-            public static final String ADDRESS_ID = "address_id";
+            public static final String PLACE_ID = "place_id";
             public static final String ADDRESS = "address";
-            public static final String ADDRESS_IMG = "address_img";
+            public static final String NAME = "name";
             public static final String LATITUDE = "latitude";
             public static final String LONGITUDE = "longitude";
         }

@@ -50,9 +50,8 @@ public abstract class BaseFragment<T> extends Fragment implements Constants {
         super.onActivityCreated(savedInstanceState);
         session = new SessionManager(getActivity());
         setController(getControllerImpl());
-
         startProperties();
-        defineListeners();
+
     }
 
     @Override public void onDestroyView() {
@@ -80,8 +79,6 @@ public abstract class BaseFragment<T> extends Fragment implements Constants {
     }
 
     protected abstract void startProperties();
-
-    protected abstract void defineListeners();
 
     protected abstract int getFragmentLayout();
 
