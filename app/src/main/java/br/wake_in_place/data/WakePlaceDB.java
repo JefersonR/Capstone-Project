@@ -27,7 +27,7 @@ public class WakePlaceDB extends SQLiteOpenHelper {
                 WakePlaceDBContract.AlarmsBD.Cols.REPEAT_DAYS + " TEXT, " +
                 WakePlaceDBContract.AlarmsBD.Cols.PLACE_ID + " TEXT, " +
                 WakePlaceDBContract.AlarmsBD.Cols.ADDRESS + " TEXT, " +
-                WakePlaceDBContract.AlarmsBD.Cols.RADIUS + " DOUBLE, " +
+                WakePlaceDBContract.AlarmsBD.Cols.RADIUS + " INTEGER, " +
                 "UNIQUE (" + WakePlaceDBContract.AlarmsBD.Cols.ID + ") ON CONFLICT REPLACE)"
         );
 

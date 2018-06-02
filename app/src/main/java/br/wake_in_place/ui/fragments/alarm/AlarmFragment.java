@@ -3,6 +3,7 @@ package br.wake_in_place.ui.fragments.alarm;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import br.wake_in_place.R;
 import br.wake_in_place.controllers.mainImpl.MainImpl;
+import br.wake_in_place.data.WakePlaceDBContract;
 import br.wake_in_place.models.response.AlarmItem;
 import br.wake_in_place.ui.adapters.AlarmAdapter;
 import br.wake_in_place.ui.bases.BaseFragment;
@@ -34,6 +36,7 @@ public class AlarmFragment extends BaseFragment implements AlarmAdapter.AlarmLis
     TextView txtNothing;
     @BindView(R.id.progress)
     ProgressBar progress;
+    private Cursor cursor;
 
     public static AlarmFragment newInstance() {
         return  new AlarmFragment();
@@ -42,12 +45,41 @@ public class AlarmFragment extends BaseFragment implements AlarmAdapter.AlarmLis
 
     @Override
     protected void startProperties() {
-        List<AlarmItem> items = new ArrayList<>();
+        createAlarm(15,16,1);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        List<AlarmItem> items = loadContent();
+        txtNothing.setVisibility((items == null || items.isEmpty()) ? View.VISIBLE : View.GONE);
         rcAlarms.setAdapter(new AlarmAdapter(items, this));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         rcAlarms.setLayoutManager(llm);
+    }
 
+    private List<AlarmItem> loadContent() {
+        cursor = getActivity().getContentResolver().query(WakePlaceDBContract.AlarmsBD.CONTENT_URI, null, null, null, null);
+        List<AlarmItem> items = new ArrayList<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                AlarmItem alarmItem = new AlarmItem(
+                        cursor.getInt(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.ID)),
+                        cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.DATE)),
+                        cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.HOUR)),
+                        cursor.getInt(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.INTERVAL)),
+                        cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.REPEAT_DAYS)),
+                        cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.ADDRESS)),
+                        cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.PLACE_ID)),
+                        cursor.getInt(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.RADIUS))
+
+                );
+                items.add(alarmItem);
+            } while (cursor.moveToNext());
+        }
+        return items;
     }
 
 
@@ -69,7 +101,7 @@ public class AlarmFragment extends BaseFragment implements AlarmAdapter.AlarmLis
 
     @Override
     public void onLongItemClick(View view) {
-        Log.e("LONGGGG");
+
     }
 
     @Override
@@ -77,6 +109,11 @@ public class AlarmFragment extends BaseFragment implements AlarmAdapter.AlarmLis
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (cursor != null) cursor.close();
+    }
 
 
     public void createAlarm(int hour_a, int min_a, int broadcast_id) {
@@ -93,11 +130,10 @@ public class AlarmFragment extends BaseFragment implements AlarmAdapter.AlarmLis
         alarmStartTime.set(Calendar.MINUTE, min_a);
         alarmStartTime.set(Calendar.SECOND, 0);
         if (now.after(alarmStartTime)) {
-            android.util.Log.d("Hey", "Added a day");
-            alarmStartTime.add(Calendar.DATE, 1);
+            Log.d("Hey", "Added a day");
+//            alarmStartTime.add(Calendar.DATE, 1);
         }
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-        android.util.Log.e("Alarm", "Alarms set for everyday.");
     }
 }

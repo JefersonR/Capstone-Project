@@ -10,7 +10,7 @@
     <!--Connection-->
     <string name="connection_error">Problema com a conexão. Conecte e tente novamente!</string>
     <string name="connection_fail">Houve uma falha nos nossos servidores, tente novamente.</string>
-    <string name="label_no_alarm">Nenhum alarme configurado no momento</string>
+    <string name="label_no_alarm">Nenhum alarme configurado no momento!</string>
     <string name="label_no_places">Você não tem nenhum lugar adicionado ainda!</string>
 
 
@@ -34,13 +34,13 @@
     <string name="label_my_places">Meus lugares</string>
     <string name="label_new_places">Novo lugar</string>
     <string name="label_distance_edit">Raio: %s</string>
-    <string name="label_summary">A partir de %s, entre %s e %s\nRepete: %s\nPróximo a %s</string>
+    <string name="label_summary">A partir de %s\nDe: %s válido por %s min\nRepete: %s\nLugar: %s\nRaio: %s metros</string>
+    <string name="label_summary_item">Hora: %s \nRepete: %s\nLugar: %s</string>
     <string name="label_save">Salvar</string>
     <string name="title_new_alarm">Configurar Alarme</string>
     <string name="label_confirm">Confirmar</string>
     <string name="label_cancel">Cancelar</string>
     <string name="title_distance">Distância</string>
-
     <string name="str_query_contains">Select * from %s where %s = \'%s\'</string>
     <string name="label_hour_init">1 hora</string>
     <string name="str_size_parameter">400x400</string>

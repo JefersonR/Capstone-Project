@@ -23,7 +23,7 @@ public class AlarmReceiver extends BroadcastReceiver
         {
             Bundle bundle = intent.getExtras();
             int message = bundle.getInt("ID");
-            Log.e( message +"");
+            Log.e( message +" >>> lalala");
 
             Intent service1 = new Intent(context, NotificationService.class);
             service1.putExtra("ID", message);

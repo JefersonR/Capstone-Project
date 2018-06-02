@@ -50,6 +50,23 @@
             android:name=".data.WakePlaceContentProvider"
             android:authorities="udacity.contentprovider.wake"
             android:exported="false" />
+        <receiver android:name=".widgets.AlarmsListWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/alarms_list_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".widgets.AlarmsIntentService"
+            android:exported="false" />
+
+        <service
+            android:name=".widgets.AlarmsWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

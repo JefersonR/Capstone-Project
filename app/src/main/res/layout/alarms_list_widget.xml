@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/regular_space_two"
+    android:paddingRight="@dimen/regular_space_two"
+    android:paddingTop="@dimen/regular_space_two">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/regular_space_two"
+        android:paddingLeft="@dimen/regular_space_two"
+        android:paddingRight="@dimen/regular_space_two"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+         />
+
+    <ListView
+        android:id="@+id/lv_alarms"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+         />
+
+</LinearLayout>

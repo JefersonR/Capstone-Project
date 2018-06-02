@@ -12,12 +12,12 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -90,13 +90,40 @@ public class RegisterAlarmActivity extends BaseActivity {
     private AlarmItem alarmItem;
     private ContentResolver contentResolver;
 
-
     @Override
     protected void startProperties() {
         setToolbar(getString(R.string.title_new_alarm));
         btnDistance.setText(String.format(getString(R.string.label_distance_edit), "500mts"));
         alarmItem = new AlarmItem();
         contentResolver = this.getContentResolver();
+        alarmItem.setRadius(getRadius(0));
+        alarmItem.setInterval(getInterval(1));
+        defineDays();
+        summary();
+        checkRepeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                   @Override
+                                                   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                       if (!buttonView.isChecked()) {
+                                                           setTogglesChecked(false);
+                                                       }
+                                                       summary();
+                                                   }
+                                               }
+        );
+        togglesListener();
+    }
+
+    private void togglesListener() {
+        for (ToggleButton toggles : getToggles()) {
+            toggles.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    defineDays();
+                    summary();
+                }
+            });
+        }
     }
 
     @Override
@@ -147,31 +174,34 @@ public class RegisterAlarmActivity extends BaseActivity {
     public void setBtnSave(View view) {
         if (verifyFields()) {
             saveAlarm(getNewAlarm());
-        }else{
-            DialogCustomUtil.dialog(this,getString(R.string.title_attention),getString(R.string.label_error_dialog_alarm));
+        } else {
+            DialogCustomUtil.dialog(this, getString(R.string.title_attention), getString(R.string.label_error_dialog_alarm));
         }
 
     }
 
+    private void summary() {
+        tvSummary.setText(String.format(getString(R.string.label_summary), alarmItem.getDate() != null ? alarmItem.getDate() : " - ",
+                alarmItem.getHour() != null ? alarmItem.getHour() : " - ", String.valueOf(alarmItem.getInterval()),
+                alarmItem.getRepeatDays() != null && !alarmItem.getRepeatDays().isEmpty() ? alarmItem.getRepeatDays() : "Sem repetição",
+                alarmItem.getAddress() != null && !alarmItem.getAddress().isEmpty() ? alarmItem.getAddress() : "Sem localização",
+                String.valueOf(alarmItem.getRadius())
+        ));
+    }
+
     private boolean verifyFields() {
         boolean verify = true;
-        if (tvDateStart.getText().toString().isEmpty()) {
+        if (alarmItem.getDate() == null || alarmItem.getDate().isEmpty()) {
             verify = false;
         }
-        if (tvHourStart.getText().toString().isEmpty()) {
-            verify = false;
-        }
-        if (tvHourEnd.getText().toString().isEmpty()) {
-            verify = false;
-        }
-        if (btnDistance.getText().toString().isEmpty()) {
+        if (alarmItem.getHour() == null || alarmItem.getHour().isEmpty()) {
             verify = false;
         }
         return verify;
     }
 
-
     private void saveAlarm(AlarmItem alarmItem) {
+
         ContentValues val = new ContentValues();
         val.put(WakePlaceDBContract.AlarmsBD.Cols.DATE, alarmItem.getDate());
         val.put(WakePlaceDBContract.AlarmsBD.Cols.HOUR, alarmItem.getHour());
@@ -181,6 +211,7 @@ public class RegisterAlarmActivity extends BaseActivity {
         val.put(WakePlaceDBContract.AlarmsBD.Cols.ADDRESS, alarmItem.getAddress());
         val.put(WakePlaceDBContract.AlarmsBD.Cols.RADIUS, alarmItem.getRadius());
         contentResolver.insert(WakePlaceDBContract.AlarmsBD.CONTENT_URI, val);
+        finish();
     }
 
 
@@ -192,30 +223,27 @@ public class RegisterAlarmActivity extends BaseActivity {
     @OnClick(R.id.btn_mark_all)
     public void setBtnMarkAll(View view) {
         checkRepeat.setChecked(true);
-        toggleButton.setChecked(true);
-        toggleButton2.setChecked(true);
-        toggleButton3.setChecked(true);
-        toggleButton4.setChecked(true);
-        toggleButton5.setChecked(true);
-        toggleButton6.setChecked(true);
-        toggleButton7.setChecked(true);
+        setTogglesChecked(true);
     }
 
     @OnClick(R.id.btn_mark_off)
     public void setBtnUnmarkAll(View view) {
         checkRepeat.setChecked(false);
-        toggleButton.setChecked(false);
-        toggleButton2.setChecked(false);
-        toggleButton3.setChecked(false);
-        toggleButton4.setChecked(false);
-        toggleButton5.setChecked(false);
-        toggleButton6.setChecked(false);
-        toggleButton7.setChecked(false);
+        setTogglesChecked(false);
+    }
+
+    private ToggleButton[] getToggles() {
+        return new ToggleButton[]{toggleButton, toggleButton2, toggleButton3, toggleButton4, toggleButton5, toggleButton6, toggleButton7};
+    }
+
+    private void setTogglesChecked(boolean isChecked) {
+        for (ToggleButton toggles : getToggles()) {
+            toggles.setChecked(isChecked);
+        }
     }
 
     public void numberPickershow(final boolean isDistance, final String[] values) {
         final Dialog dialog = new Dialog(this, R.style.DateDialog);
-        dialog.setTitle(R.string.title_distance);
         dialog.setContentView(R.layout.number_picker_dialog);
         Button aply = (Button) dialog.findViewById(R.id.apply_button);
         final NumberPicker np = (NumberPicker) dialog.findViewById(R.id.number_picker);
@@ -233,15 +261,70 @@ public class RegisterAlarmActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (isDistance) {
+                    alarmItem.setRadius(getRadius(np.getValue()));
                     btnDistance.setText(String.format(getString(R.string.label_distance_edit), values[np.getValue()]));
                 } else {
+                    alarmItem.setInterval(getInterval(np.getValue()));
                     tvHourEnd.setText(values[np.getValue()]);
                 }
                 dialog.dismiss();
+                summary();
             }
         });
 
         dialog.show();
+    }
+
+    private int getInterval(int value) {
+        int interval = 60;
+        switch (value) {
+            case 0:
+                interval = 30;
+                break;
+            case 1:
+                interval = 60;
+                break;
+            case 2:
+                interval = 90;
+                break;
+            case 3:
+                interval = 120;
+                break;
+            case 4:
+                interval = 180;
+                break;
+            case 5:
+                interval = 300;
+                break;
+        }
+        summary();
+        return interval;
+    }
+
+    private int getRadius(int value) {
+        int distance = 500;
+        switch (value) {
+            case 0:
+                distance = 500;
+                break;
+            case 1:
+                distance = 1000;
+                break;
+            case 2:
+                distance = 1500;
+                break;
+            case 3:
+                distance = 2000;
+                break;
+            case 4:
+                distance = 3000;
+                break;
+            case 5:
+                distance = 5000;
+                break;
+        }
+        summary();
+        return distance;
     }
 
     private void setHour(final TextView textView) {
@@ -258,22 +341,27 @@ public class RegisterAlarmActivity extends BaseActivity {
                 } else {
                     selected = selectedHour + ":" + selectedMinute;
                 }
+                alarmItem.setHour(selected);
                 textView.setText(selected);
                 textView.setTextColor(ContextCompat.getColor(RegisterAlarmActivity.this, R.color.colorAccent));
+                summary();
             }
         }, hour, minute, true);//Yes 24 hour time
+
         mTimePicker.show();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(data, this);
-            String toastMsg = String.format("Place: %s", place.getName());
-            Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+            alarmItem.setAddress((String) place.getAddress());
+            alarmItem.setPlaceID((String) place.getId());
         } else if (requestCode == MY_PLACES_REQUEST && resultCode == RESULT_OK) {
-            PlaceItem place = data.getParcelableExtra(IS_CHOICE);
-            Toast.makeText(this, place.getAddress(), Toast.LENGTH_LONG).show();
+            PlaceItem myPlace = data.getParcelableExtra(IS_CHOICE);
+            alarmItem.setAddress(myPlace.getAddress());
+            alarmItem.setPlaceID(myPlace.getId());
         }
+        summary();
     }
 
     protected void setDateTimeField(final TextView textView) {
@@ -290,7 +378,8 @@ public class RegisterAlarmActivity extends BaseActivity {
                 String selected = dateFormatter2.format(newDate.getTime());
                 textView.setText(dateFormatter.format(newDate.getTime()));
                 textView.setTextColor(ContextCompat.getColor(RegisterAlarmActivity.this, R.color.colorAccent));
-
+                alarmItem.setDate(dateFormatter.format(newDate.getTime()));
+                summary();
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -301,11 +390,42 @@ public class RegisterAlarmActivity extends BaseActivity {
         } catch (Exception e) {
             e.getMessage();
         }
+
         fromDatePickerDialog.show();
     }
 
     public AlarmItem getNewAlarm() {
-
         return alarmItem;
+    }
+
+
+    private void defineDays() {
+        StringBuffer text = new StringBuffer();
+        text.setLength(0);
+
+        if (toggleButton.isChecked()) {
+            text.append("SEG ");
+        }
+        if (toggleButton2.isChecked()) {
+            text.append("TER ");
+        }
+        if (toggleButton3.isChecked()) {
+            text.append("QUA ");
+        }
+        if (toggleButton4.isChecked()) {
+            text.append("QUI ");
+        }
+        if (toggleButton5.isChecked()) {
+            text.append("SEX ");
+        }
+        if (toggleButton6.isChecked()) {
+            text.append("SAB ");
+        }
+        if (toggleButton7.isChecked()) {
+            text.append("DOM");
+        }
+        text.setLength(text.length());
+        alarmItem.setRepeatDays(text.toString());
+        summary();
     }
 }

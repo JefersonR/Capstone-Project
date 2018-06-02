@@ -332,7 +332,7 @@
             android:fontFamily="sans-serif-thin"
             android:gravity="start|center_vertical"
             android:padding="@dimen/regular_space_two"
-            android:text="@string/label_summary"
+            tools:text="@string/label_summary"
             android:textSize="12sp"
             android:textStyle="bold" />
 

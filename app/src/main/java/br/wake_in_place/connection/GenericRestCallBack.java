@@ -20,9 +20,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by Jeferson on 26/04/2017.
- */
 
 public class GenericRestCallBack<T> implements Callback<T> {
     private OnSucess onSucessListener;

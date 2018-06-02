@@ -12,12 +12,12 @@ public class AlarmItem implements Parcelable {
     private String repeatDays;
     private String placeID;
     private String address;
-    private double radius;
+    private int radius;
 
     public AlarmItem(){}
 
 
-    public AlarmItem(int id, String date, String hour, int interval, String repeatDays, String placeID, double radius) {
+    public AlarmItem(int id, String date, String hour, int interval, String repeatDays, String address, String placeID, int radius) {
         this.id = id;
         this.date = date;
         this.hour = hour;
@@ -25,6 +25,7 @@ public class AlarmItem implements Parcelable {
         this.repeatDays = repeatDays;
         this.placeID = placeID;
         this.radius = radius;
+        this.address = address;
     }
 
     public int getId() {
@@ -75,11 +76,11 @@ public class AlarmItem implements Parcelable {
         this.placeID = placeID;
     }
 
-    public double getRadius() {
+    public int getRadius() {
         return radius;
     }
 
-    public void setRadius(double radius) {
+    public void setRadius(int radius) {
         this.radius = radius;
 
     }
@@ -100,7 +101,7 @@ public class AlarmItem implements Parcelable {
         repeatDays = in.readString();
         placeID = in.readString();
         address = in.readString();
-        radius = in.readDouble();
+        radius = in.readInt();
     }
 
     @Override
@@ -117,7 +118,7 @@ public class AlarmItem implements Parcelable {
         dest.writeString(repeatDays);
         dest.writeString(placeID);
         dest.writeString(address);
-        dest.writeDouble(radius);
+        dest.writeInt(radius);
     }
 
     @SuppressWarnings("unused")
