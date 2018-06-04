@@ -1,12 +1,16 @@
 package br.wake_in_place.ui.activities;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,9 +23,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import br.wake_in_place.R;
 import br.wake_in_place.controllers.mainImpl.MainImpl;
@@ -31,19 +38,22 @@ import br.wake_in_place.ui.bases.BaseActivity;
 import br.wake_in_place.ui.fragments.alarm.AlarmFragment;
 import br.wake_in_place.ui.fragments.places.PlacesFragment;
 import br.wake_in_place.utils.DialogCustomUtil;
+import br.wake_in_place.utils.Log;
+import br.wake_in_place.utils.Snackbar;
 import butterknife.BindView;
 import butterknife.OnClick;
-
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
     int PLACE_PICKER_REQUEST = 1;
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
     private AlarmFragment alarmFragment;
     private PlacesFragment placesFragment;
 
     private ContentResolver contentResolver;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @BindView(R.id.container)
     ViewPager mViewPager;
@@ -60,6 +70,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
         setToolbar(R.id.toolbar, false, "Wake in Place");
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -86,18 +98,42 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
 
             }
         });
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+
+                        if (location != null) {
+                            Log.e("Meu lugar ", location.toString());
+                        }
+                    }
+                });
 
     }
 
     @OnClick(R.id.fab)
     public void setBtnFab(View view) {
-        if (isAlarmPage) {
-            startActivity(new Intent(MainActivity.this, RegisterAlarmActivity.class));
+        if (!checkPermissions()) {
+            requestPermissions();
         } else {
-            try {
-                startActivityForResult(builder.build(MainActivity.this), PLACE_PICKER_REQUEST);
-            } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-                e.printStackTrace();
+            if (isAlarmPage) {
+                startActivity(new Intent(MainActivity.this, RegisterAlarmActivity.class));
+            } else {
+                try {
+                    startActivityForResult(builder.build(MainActivity.this), PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -211,4 +247,53 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
         val.put(WakePlaceDBContract.PlacesBD.Cols.LONGITUDE, place.getLatLng().longitude);
         contentResolver.insert(WakePlaceDBContract.PlacesBD.CONTENT_URI, val);
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!checkPermissions()) {
+            requestPermissions();
+        }
+    }
+
+    private boolean checkPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermissions() {
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION);
+
+        // Provide an additional rationale to the user. This would happen if the user denied the
+        // request previously, but didn't check the "Don't ask again" checkbox.
+        if (shouldProvideRationale) {
+            Log.i("Displaying permission rationale to provide additional context.");
+            Snackbar.make(getMyContext(), getString(R.string.permission_rationale), getString(android.R.string.ok),
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // Request permission
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                        }
+                    });
+        } else {
+            Log.i("Requesting permission");
+            // Request permission. It's possible this can be auto answered if device policy
+            // sets the permission in a given state or the user denied the permission
+            // previously and checked "Never ask again".
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+
+
+
+
 }

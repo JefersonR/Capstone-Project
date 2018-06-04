@@ -1,12 +1,15 @@
 package br.wake_in_place.ui.activities;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
@@ -36,13 +39,15 @@ import br.wake_in_place.data.WakePlaceDBContract;
 import br.wake_in_place.models.response.AlarmItem;
 import br.wake_in_place.models.response.PlaceItem;
 import br.wake_in_place.ui.bases.BaseActivity;
+import br.wake_in_place.ui.services.AlarmReceiver;
+import br.wake_in_place.utils.Constants;
 import br.wake_in_place.utils.DialogCustomUtil;
 import butterknife.BindView;
 import butterknife.OnClick;
 
 import static br.wake_in_place.ui.fragments.places.PlacesFragment.IS_CHOICE;
 
-public class RegisterAlarmActivity extends BaseActivity {
+public class RegisterAlarmActivity extends BaseActivity implements Constants {
 
     @BindView(R.id.tv_date_start)
     TextView tvDateStart;
@@ -86,6 +91,7 @@ public class RegisterAlarmActivity extends BaseActivity {
     Button btnSave;
     private int PLACE_PICKER_REQUEST = 1;
     private int MY_PLACES_REQUEST = 2;
+    public static String ALARM = "ALARM";
     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
     private AlarmItem alarmItem;
     private ContentResolver contentResolver;
@@ -93,7 +99,7 @@ public class RegisterAlarmActivity extends BaseActivity {
     @Override
     protected void startProperties() {
         setToolbar(getString(R.string.title_new_alarm));
-        btnDistance.setText(String.format(getString(R.string.label_distance_edit), "500mts"));
+        btnDistance.setText(String.format(getString(R.string.label_distance_edit), getString(R.string.str_init_distance)));
         alarmItem = new AlarmItem();
         contentResolver = this.getContentResolver();
         alarmItem.setRadius(getRadius(0));
@@ -210,8 +216,62 @@ public class RegisterAlarmActivity extends BaseActivity {
         val.put(WakePlaceDBContract.AlarmsBD.Cols.PLACE_ID, alarmItem.getPlaceID());
         val.put(WakePlaceDBContract.AlarmsBD.Cols.ADDRESS, alarmItem.getAddress());
         val.put(WakePlaceDBContract.AlarmsBD.Cols.RADIUS, alarmItem.getRadius());
-        contentResolver.insert(WakePlaceDBContract.AlarmsBD.CONTENT_URI, val);
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.LATITUDE, alarmItem.getLatitude());
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.LONGITUDE, alarmItem.getLongitude());
+        val.put(WakePlaceDBContract.AlarmsBD.Cols.ACTIVE, 1);
+        Uri uri = contentResolver.insert(WakePlaceDBContract.AlarmsBD.CONTENT_URI, val);
+        long rowId = Long.valueOf(uri.getLastPathSegment());
+        alarmItem.setId((int) rowId);
+        createAlarms(alarmItem);
         finish();
+    }
+
+    private void createAlarms(AlarmItem alarmItem){
+        String days[] = alarmItem.getRepeatDays().split(" ");
+        for(String day : days){
+            switch (day) {
+                case SEG:
+                    createAlarm(alarmItem,Calendar.MONDAY);
+                    break;
+                case TER:
+                    createAlarm(alarmItem,Calendar.TUESDAY);
+                    break;
+                case QUA:
+                    createAlarm(alarmItem,Calendar.WEDNESDAY);
+                    break;
+                case QUI:
+                    createAlarm(alarmItem,Calendar.THURSDAY);
+                    break;
+                case SEX:
+                    createAlarm(alarmItem,Calendar.FRIDAY);
+                    break;
+                case SAB:
+                    createAlarm(alarmItem,Calendar.SATURDAY);
+                    break;
+                case DOM:
+                    createAlarm(alarmItem,Calendar.SUNDAY);
+                    break;
+            }
+        }
+    }
+
+
+    public void createAlarm(AlarmItem alarmItem, int dayOfWeek) {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class); // AlarmReceiver1 = broadcast receiver
+        alarmIntent.putExtra(ALARM, alarmItem);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmItem.getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmIntent.setData((Uri.parse("custom://" + System.currentTimeMillis())));
+        alarmManager.cancel(pendingIntent);
+
+        Calendar alarmStartTime = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+
+        alarmStartTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(alarmItem.getHour().split(":")[0]));
+        alarmStartTime.set(Calendar.MINUTE, Integer.valueOf(alarmItem.getHour().split(":")[1]));
+        alarmStartTime.set(Calendar.SECOND, 0);
+        alarmStartTime.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 
 
@@ -356,10 +416,14 @@ public class RegisterAlarmActivity extends BaseActivity {
             Place place = PlacePicker.getPlace(data, this);
             alarmItem.setAddress((String) place.getAddress());
             alarmItem.setPlaceID((String) place.getId());
+            alarmItem.setLatitude(place.getLatLng().latitude);
+            alarmItem.setLongitude(place.getLatLng().longitude);
         } else if (requestCode == MY_PLACES_REQUEST && resultCode == RESULT_OK) {
             PlaceItem myPlace = data.getParcelableExtra(IS_CHOICE);
             alarmItem.setAddress(myPlace.getAddress());
             alarmItem.setPlaceID(myPlace.getId());
+            alarmItem.setLatitude(myPlace.getLatitude());
+            alarmItem.setLongitude(myPlace.getLongitude());
         }
         summary();
     }
@@ -400,29 +464,29 @@ public class RegisterAlarmActivity extends BaseActivity {
 
 
     private void defineDays() {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         text.setLength(0);
 
         if (toggleButton.isChecked()) {
-            text.append("SEG ");
+            text.append(SEG + " ");
         }
         if (toggleButton2.isChecked()) {
-            text.append("TER ");
+            text.append(TER+" ");
         }
         if (toggleButton3.isChecked()) {
-            text.append("QUA ");
+            text.append(QUA+" ");
         }
         if (toggleButton4.isChecked()) {
-            text.append("QUI ");
+            text.append(QUI+" ");
         }
         if (toggleButton5.isChecked()) {
-            text.append("SEX ");
+            text.append(SEX+" ");
         }
         if (toggleButton6.isChecked()) {
-            text.append("SAB ");
+            text.append(SAB+" ");
         }
         if (toggleButton7.isChecked()) {
-            text.append("DOM");
+            text.append(DOM);
         }
         text.setLength(text.length());
         alarmItem.setRepeatDays(text.toString());

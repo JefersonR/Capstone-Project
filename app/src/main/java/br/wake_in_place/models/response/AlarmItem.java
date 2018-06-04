@@ -12,20 +12,25 @@ public class AlarmItem implements Parcelable {
     private String repeatDays;
     private String placeID;
     private String address;
+    private double latitude;
+    private double longitude;
+    private boolean isActive;
     private int radius;
 
     public AlarmItem(){}
 
-
-    public AlarmItem(int id, String date, String hour, int interval, String repeatDays, String address, String placeID, int radius) {
+    public AlarmItem(int id, String date, String hour, int interval, String repeatDays, String placeID, String address, double latitude, double longitude, boolean isActive, int radius) {
         this.id = id;
         this.date = date;
         this.hour = hour;
         this.interval = interval;
         this.repeatDays = repeatDays;
         this.placeID = placeID;
-        this.radius = radius;
         this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.isActive = isActive;
+        this.radius = radius;
     }
 
     public int getId() {
@@ -76,21 +81,44 @@ public class AlarmItem implements Parcelable {
         this.placeID = placeID;
     }
 
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-
-    }
-
     public String getAddress() {
         return address;
     }
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 
     protected AlarmItem(Parcel in) {
@@ -101,6 +129,9 @@ public class AlarmItem implements Parcelable {
         repeatDays = in.readString();
         placeID = in.readString();
         address = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        isActive = in.readByte() != 0x00;
         radius = in.readInt();
     }
 
@@ -118,6 +149,9 @@ public class AlarmItem implements Parcelable {
         dest.writeString(repeatDays);
         dest.writeString(placeID);
         dest.writeString(address);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeByte((byte) (isActive ? 0x01 : 0x00));
         dest.writeInt(radius);
     }
 

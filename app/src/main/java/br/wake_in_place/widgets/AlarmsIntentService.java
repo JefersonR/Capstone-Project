@@ -68,8 +68,11 @@ public class AlarmsIntentService extends IntentService {
                         cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.HOUR)),
                         cursor.getInt(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.INTERVAL)),
                         cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.REPEAT_DAYS)),
-                        cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.ADDRESS)),
                         cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.PLACE_ID)),
+                        cursor.getString(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.ADDRESS)),
+                        cursor.getDouble(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.LATITUDE)),
+                        cursor.getDouble(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.LONGITUDE)),
+                        cursor.getInt(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.ACTIVE)) > 0,
                         cursor.getInt(cursor.getColumnIndex(WakePlaceDBContract.AlarmsBD.Cols.RADIUS))
 
                 );

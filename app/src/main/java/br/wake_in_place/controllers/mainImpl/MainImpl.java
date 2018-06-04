@@ -17,13 +17,12 @@ public class MainImpl extends BaseImpl implements RetrofitInterface {
     public MainImpl(Context context) {
         this.context = context;
     }
-
-/*    public void getStaticMap(double latitude, double longitude, OnSucess onSucessListener){
-        final String size = "400x400";
+/*
+    public void getClimate(double latitude, double longitude, OnSucess onSucessListener){
+        final String lang = "pt";
         final String key = BuildConfig.KEY;;
-        final int zoom = 14;
 
-        new GenericRestCallBack<String>().request(getMyContext(), getApiService().getStaticMap(latitude+","+longitude,zoom,size,key),onSucessListener, true);
+        new GenericRestCallBack<String>().request(getMyContext(), getApiService().getClimate(latitude+","+longitude,zoom,size,key),onSucessListener, true);
     }*/
 
     @Override

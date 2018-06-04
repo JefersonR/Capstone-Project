@@ -61,10 +61,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.CardChangesV
                         return false;
                     }
                 });
-
+                holder.switch1.setChecked(item.isActive());
                 holder.switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        alarmListener.onCheckListener(buttonView, isChecked);
+                        item.setActive(isChecked);
                     }
                 });
 
@@ -91,7 +91,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.CardChangesV
 
         public void onLongItemClick(View view);
 
-        public void onCheckListener(CompoundButton buttonView, boolean isChecked);
     }
 
     protected class CardChangesViewHolder extends RecyclerView.ViewHolder {
