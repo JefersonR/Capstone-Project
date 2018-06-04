@@ -10,7 +10,7 @@ import android.widget.RemoteViews;
 import java.util.List;
 
 import br.wake_in_place.R;
-import br.wake_in_place.models.response.AlarmItem;
+import br.wake_in_place.models.AlarmItem;
 
 /**
  * Implementation of App Widget functionality.

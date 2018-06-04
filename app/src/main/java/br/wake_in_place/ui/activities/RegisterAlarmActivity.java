@@ -36,12 +36,14 @@ import java.util.Locale;
 import br.wake_in_place.R;
 import br.wake_in_place.controllers.detailImpl.DetailImpl;
 import br.wake_in_place.data.WakePlaceDBContract;
-import br.wake_in_place.models.response.AlarmItem;
-import br.wake_in_place.models.response.PlaceItem;
+import br.wake_in_place.models.AlarmItem;
+import br.wake_in_place.models.PlaceItem;
 import br.wake_in_place.ui.bases.BaseActivity;
 import br.wake_in_place.ui.services.AlarmReceiver;
 import br.wake_in_place.utils.Constants;
 import br.wake_in_place.utils.DialogCustomUtil;
+import br.wake_in_place.utils.Log;
+import br.wake_in_place.utils.ParcelableUtil;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -104,6 +106,7 @@ public class RegisterAlarmActivity extends BaseActivity implements Constants {
         contentResolver = this.getContentResolver();
         alarmItem.setRadius(getRadius(0));
         alarmItem.setInterval(getInterval(1));
+        alarmItem.setActive(true);
         defineDays();
         summary();
         checkRepeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -189,8 +192,8 @@ public class RegisterAlarmActivity extends BaseActivity implements Constants {
     private void summary() {
         tvSummary.setText(String.format(getString(R.string.label_summary), alarmItem.getDate() != null ? alarmItem.getDate() : " - ",
                 alarmItem.getHour() != null ? alarmItem.getHour() : " - ", String.valueOf(alarmItem.getInterval()),
-                alarmItem.getRepeatDays() != null && !alarmItem.getRepeatDays().isEmpty() ? alarmItem.getRepeatDays() : "Sem repetição",
-                alarmItem.getAddress() != null && !alarmItem.getAddress().isEmpty() ? alarmItem.getAddress() : "Sem localização",
+                alarmItem.getRepeatDays() != null && !alarmItem.getRepeatDays().isEmpty() ? alarmItem.getRepeatDays() : getString(R.string.label_no_location),
+                alarmItem.getAddress() != null && !alarmItem.getAddress().isEmpty() ? alarmItem.getAddress() : getString(R.string.label_no_location_summary),
                 String.valueOf(alarmItem.getRadius())
         ));
     }
@@ -226,52 +229,67 @@ public class RegisterAlarmActivity extends BaseActivity implements Constants {
         finish();
     }
 
-    private void createAlarms(AlarmItem alarmItem){
+    private void createAlarms(AlarmItem alarmItem) {
         String days[] = alarmItem.getRepeatDays().split(" ");
-        for(String day : days){
-            switch (day) {
-                case SEG:
-                    createAlarm(alarmItem,Calendar.MONDAY);
-                    break;
-                case TER:
-                    createAlarm(alarmItem,Calendar.TUESDAY);
-                    break;
-                case QUA:
-                    createAlarm(alarmItem,Calendar.WEDNESDAY);
-                    break;
-                case QUI:
-                    createAlarm(alarmItem,Calendar.THURSDAY);
-                    break;
-                case SEX:
-                    createAlarm(alarmItem,Calendar.FRIDAY);
-                    break;
-                case SAB:
-                    createAlarm(alarmItem,Calendar.SATURDAY);
-                    break;
-                case DOM:
-                    createAlarm(alarmItem,Calendar.SUNDAY);
-                    break;
+        if (days.length != 0) {
+            for (String day : days) {
+                switch (day) {
+                    case SEG:
+                        createAlarm(alarmItem, Calendar.MONDAY);
+                        break;
+                    case TER:
+                        createAlarm(alarmItem, Calendar.TUESDAY);
+                        break;
+                    case QUA:
+                        createAlarm(alarmItem, Calendar.WEDNESDAY);
+                        break;
+                    case QUI:
+                        createAlarm(alarmItem, Calendar.THURSDAY);
+                        break;
+                    case SEX:
+                        createAlarm(alarmItem, Calendar.FRIDAY);
+                        break;
+                    case SAB:
+                        createAlarm(alarmItem, Calendar.SATURDAY);
+                        break;
+                    case DOM:
+                        createAlarm(alarmItem, Calendar.SUNDAY);
+                        break;
+                }
             }
+        } else {
+            createAlarm(alarmItem, -1);
         }
     }
 
 
+
+
     public void createAlarm(AlarmItem alarmItem, int dayOfWeek) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent alarmIntent = new Intent(this, AlarmReceiver.class); // AlarmReceiver1 = broadcast receiver
-        alarmIntent.putExtra(ALARM, alarmItem);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmItem.getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent alarmIntent = new Intent(RegisterAlarmActivity.this, AlarmReceiver.class); // AlarmReceiver1 = broadcast receiver
+        alarmIntent.putExtra(ALARM, ParcelableUtil.marshall(alarmItem));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(RegisterAlarmActivity.this, alarmItem.getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT );
         alarmIntent.setData((Uri.parse("custom://" + System.currentTimeMillis())));
         alarmManager.cancel(pendingIntent);
 
         Calendar alarmStartTime = Calendar.getInstance();
-        Calendar now = Calendar.getInstance();
 
+        alarmStartTime.set(Calendar.DAY_OF_MONTH, Integer.valueOf(alarmItem.getDate().split("/")[0]) );
+        alarmStartTime.set(Calendar.MONTH, Integer.valueOf(alarmItem.getDate().split("/")[1]) - 1);
+        alarmStartTime.set(Calendar.YEAR,Integer.valueOf(alarmItem.getDate().split("/")[2]) );
         alarmStartTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(alarmItem.getHour().split(":")[0]));
         alarmStartTime.set(Calendar.MINUTE, Integer.valueOf(alarmItem.getHour().split(":")[1]));
         alarmStartTime.set(Calendar.SECOND, 0);
-        alarmStartTime.set(Calendar.DAY_OF_WEEK, dayOfWeek);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+
+        if (dayOfWeek != -1) {
+            alarmStartTime.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+            alarmStartTime.add(Calendar.DATE, -7);
+            Log.e(alarmStartTime.getTime().toString());
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+        }else{
+            alarmManager.set(AlarmManager.RTC_WAKEUP,alarmStartTime.getTimeInMillis(),pendingIntent);
+        }
     }
 
 
@@ -437,9 +455,7 @@ public class RegisterAlarmActivity extends BaseActivity implements Constants {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-                SimpleDateFormat dateFormatter2 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
                 newDate.set(year, monthOfYear, dayOfMonth);
-                String selected = dateFormatter2.format(newDate.getTime());
                 textView.setText(dateFormatter.format(newDate.getTime()));
                 textView.setTextColor(ContextCompat.getColor(RegisterAlarmActivity.this, R.color.colorAccent));
                 alarmItem.setDate(dateFormatter.format(newDate.getTime()));
@@ -471,19 +487,19 @@ public class RegisterAlarmActivity extends BaseActivity implements Constants {
             text.append(SEG + " ");
         }
         if (toggleButton2.isChecked()) {
-            text.append(TER+" ");
+            text.append(TER + " ");
         }
         if (toggleButton3.isChecked()) {
-            text.append(QUA+" ");
+            text.append(QUA + " ");
         }
         if (toggleButton4.isChecked()) {
-            text.append(QUI+" ");
+            text.append(QUI + " ");
         }
         if (toggleButton5.isChecked()) {
-            text.append(SEX+" ");
+            text.append(SEX + " ");
         }
         if (toggleButton6.isChecked()) {
-            text.append(SAB+" ");
+            text.append(SAB + " ");
         }
         if (toggleButton7.isChecked()) {
             text.append(DOM);

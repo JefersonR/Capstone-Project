@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
@@ -20,8 +21,9 @@ import com.google.android.gms.tasks.Task;
 
 import br.wake_in_place.geofence.GeofenceBroadcastReceiver;
 import br.wake_in_place.geofence.GeofenceErrorMessages;
-import br.wake_in_place.models.response.AlarmItem;
+import br.wake_in_place.models.AlarmItem;
 import br.wake_in_place.utils.Log;
+import br.wake_in_place.utils.ParcelableUtil;
 
 import static br.wake_in_place.ui.activities.RegisterAlarmActivity.ALARM;
 
@@ -53,8 +55,12 @@ public class AlarmReceiver extends BroadcastReceiver implements OnCompleteListen
             this.context = context;
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                AlarmItem alarmItem = bundle.getParcelable(ALARM);
-                if (alarmItem != null && alarmItem.isActive() && alarmItem.getLatitude() != 0 && alarmItem.getLongitude() != 0) {
+                byte[] bytes  = bundle.getByteArray(ALARM);
+                Parcel parcel = ParcelableUtil.unmarshall(bytes);
+                AlarmItem alarmItem = new AlarmItem(parcel);
+                Log.e("-->" + alarmItem.getAddress());
+                if ( alarmItem.isActive() && alarmItem.getLatitude() != 0 && alarmItem.getLongitude() != 0) {
+                    Log.e("-->" + alarmItem.getAddress());
                     mGeofencingClient = LocationServices.getGeofencingClient(context);
                     Geofence geofence = new Geofence.Builder()
                             // Set the request ID of the geofence. This is a string to identify this

@@ -1,4 +1,4 @@
-package br.wake_in_place.models.response;
+package br.wake_in_place.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -59,6 +59,7 @@
     <string name="label_title_places_exists">Ops!</string>
     <string name="str_google_uri">com.google.android.apps.maps</string>
     <string name="title_attention">Atenção</string>
+    <string name="label_cimate">%s%s, %.1fº</string>
     <string name="label_error_dialog_alarm">Por favor preencha data e hora do seu alarme</string>
 
     <!-- Error strings -->
@@ -80,7 +81,7 @@
     <string name="unknown_geofence_transition">Unknown Transition</string>
 
     <string name="geofence_transition_notification_text">
-        Click notification to return to app
+        Você está próximo ao seu local.
     </string>
 
     <string name="insufficient_permissions">Insufficient permissions.</string>
@@ -88,4 +89,9 @@
     <string name="permission_denied_explanation">Permission was denied, but is needed for core
         functionality.</string>
     <string name="str_init_distance">500mts</string>
+    <string name="title_alarm_tab">Alarme</string>
+    <string name="title_places_tab">Meus lugares</string>
+    <string name="label_no_location">Sem repetição</string>
+    <string name="label_no_location_summary">Sem localização</string>
+    <string name="label_content_maps">Isso é um mapa</string>
 </resources>

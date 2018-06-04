@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.wake_in_place.R;
-import br.wake_in_place.models.response.AlarmItem;
+import br.wake_in_place.models.AlarmItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.wake_in_place.R;
-import br.wake_in_place.models.response.PlaceItem;
+import br.wake_in_place.models.PlaceItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

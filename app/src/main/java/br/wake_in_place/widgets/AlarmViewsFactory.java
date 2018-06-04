@@ -7,7 +7,7 @@ import android.widget.RemoteViewsService;
 import java.util.List;
 
 import br.wake_in_place.R;
-import br.wake_in_place.models.response.AlarmItem;
+import br.wake_in_place.models.AlarmItem;
 
 public class AlarmViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 

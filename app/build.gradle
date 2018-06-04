@@ -1,29 +1,32 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "br.wake_in_place"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+
     buildTypes {
         release {
+            signingConfig signingConfigs.releaseSign
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", "LOG", "false"
-            buildConfigField "String", "API_HOST", '"https://maps.googleapis.com/maps/api/"'
+            buildConfigField "String", "API_HOST", '"http://api.openweathermap.org"'
             resValue "string", "app_name", "Wake in place"
 
         }
 
         debug {
             buildConfigField "boolean", "LOG", "true"
-            buildConfigField "String", "API_HOST", '"https://maps.googleapis.com/maps/api/"'
+            buildConfigField "String", "API_HOST", '"http://api.openweathermap.org"'
             resValue "string", "app_name", "Wake in place DEV"
 
         }
@@ -31,7 +34,7 @@ android {
 }
 
 ext {
-    supportLibraryVersion = '26.1.0'
+    supportLibraryVersion = '27.1.0'
     gmsVersion = '15.0.1'
     butterKnife = '8.8.1'
     okHttp = '3.9.1'
@@ -44,7 +47,6 @@ dependencies {
     })
     implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
     implementation "com.android.support:design:$supportLibraryVersion"
-    implementation "com.android.support:support-vector-drawable:$supportLibraryVersion"
     implementation "com.android.support:cardview-v7:$supportLibraryVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibraryVersion"
     implementation "com.android.support:gridlayout-v7:$supportLibraryVersion"

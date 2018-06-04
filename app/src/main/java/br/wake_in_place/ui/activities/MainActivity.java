@@ -31,9 +31,11 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import br.wake_in_place.R;
+import br.wake_in_place.connection.interfaces.OnSucess;
 import br.wake_in_place.controllers.mainImpl.MainImpl;
 import br.wake_in_place.data.WakePlaceContentProvider;
 import br.wake_in_place.data.WakePlaceDBContract;
+import br.wake_in_place.models.response.ClimateResponse;
 import br.wake_in_place.ui.bases.BaseActivity;
 import br.wake_in_place.ui.fragments.alarm.AlarmFragment;
 import br.wake_in_place.ui.fragments.places.PlacesFragment;
@@ -42,6 +44,7 @@ import br.wake_in_place.utils.Log;
 import br.wake_in_place.utils.Snackbar;
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Response;
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
@@ -67,7 +70,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
 
     @Override
     protected void startProperties() {
-        setToolbar(R.id.toolbar, false, "Wake in Place");
+        setToolbar(R.id.toolbar, false, getString(R.string.app_name));
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -98,14 +101,13 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
 
             }
         });
+        location();
+
+
+    }
+
+    private void location() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         mFusedLocationClient.getLastLocation()
@@ -114,11 +116,23 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
                     public void onSuccess(Location location) {
 
                         if (location != null) {
-                            Log.e("Meu lugar ", location.toString());
+                            getControllerImpl().getClimate(location.getLatitude(), location.getLongitude(), new OnSucess() {
+                                @Override
+                                public void onSucessResponse(Response response) {
+                                    ClimateResponse climate = (ClimateResponse) response.body();
+                                    if (alarmFragment == null) {
+                                        alarmFragment = AlarmFragment.newInstance();
+                                    }
+                                    if (climate != null)
+                                        alarmFragment.updateClimate(String.format(getString(R.string.label_cimate),
+                                                climate.getName(),
+                                                climate.getWeather() != null && !climate.getWeather().isEmpty() ? ", " + climate.getWeather().get(0).getDescription() : "",
+                                                climate.getMain().getTemp()));
+                                }
+                            });
                         }
                     }
                 });
-
     }
 
     @OnClick(R.id.fab)
@@ -210,9 +224,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Alarme";
+                    return getString(R.string.title_alarm_tab);
                 case 1:
-                    return "Meus lugares";
+                    return getString(R.string.title_places_tab);
             }
             return null;
         }
@@ -282,7 +296,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
                         }
                     });
         } else {
-            Log.i("Requesting permission");
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
@@ -292,8 +305,21 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.OnConn
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS_REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    location();
 
+                }
+            }
 
+        }
+    }
 
 
 }

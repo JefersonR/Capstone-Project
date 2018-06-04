@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.wake_in_place.data.WakePlaceDBContract;
-import br.wake_in_place.models.response.AlarmItem;
+import br.wake_in_place.models.AlarmItem;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in

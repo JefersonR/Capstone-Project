@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -18,12 +22,13 @@ import br.wake_in_place.BuildConfig;
 import br.wake_in_place.R;
 import br.wake_in_place.controllers.mainImpl.MainImpl;
 import br.wake_in_place.data.WakePlaceDBContract;
-import br.wake_in_place.models.response.PlaceItem;
+import br.wake_in_place.models.PlaceItem;
 import br.wake_in_place.ui.adapters.PlacesAdapter;
 import br.wake_in_place.ui.bases.BaseFragment;
 import butterknife.BindView;
 
-public class PlacesFragment extends BaseFragment implements PlacesAdapter.PlaceListener {
+public class PlacesFragment extends BaseFragment implements PlacesAdapter.PlaceListener,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
 
     @BindView(R.id.rc_places)
@@ -33,8 +38,7 @@ public class PlacesFragment extends BaseFragment implements PlacesAdapter.PlaceL
     @BindView(R.id.progress)
     ProgressBar progress;
     public static final String IS_CHOICE = "is_choice";
-    private Cursor cursor;
-
+    private static final int LOADER_ID = 345;
 
     public static PlacesFragment newInstance() {
         PlacesFragment placesFragment = new PlacesFragment();
@@ -52,31 +56,20 @@ public class PlacesFragment extends BaseFragment implements PlacesAdapter.PlaceL
         return placesFragment;
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (cursor != null) cursor.close();
-    }
-
 
     @Override
     protected void startProperties() {
-        updateList();
+        if (getActivity() != null)
+            getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
 
     public void updateList() {
-        List<PlaceItem> items = loadContent();
-        txtNothing.setVisibility((items == null || items.isEmpty()) ? View.VISIBLE : View.GONE);
-        rcPlaces.setAdapter(new PlacesAdapter(items, this));
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        rcPlaces.setLayoutManager(llm);
-
+        if (getActivity() != null)
+            getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
-    private List<PlaceItem> loadContent() {
-        cursor = getActivity().getContentResolver().query(WakePlaceDBContract.PlacesBD.CONTENT_URI, null, null, null, null);
+    private List<PlaceItem> loadContent(Cursor cursor) {
         List<PlaceItem> items = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -126,7 +119,6 @@ public class PlacesFragment extends BaseFragment implements PlacesAdapter.PlaceL
     }
 
 
-
     @Override
     public void onItemClick(View view, PlaceItem placeItem) {
         if (getArguments().getBoolean(IS_CHOICE)) {
@@ -142,5 +134,26 @@ public class PlacesFragment extends BaseFragment implements PlacesAdapter.PlaceL
                 getActivity().startActivity(mapIntent);
             }
         }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(getActivity(), WakePlaceDBContract.PlacesBD.CONTENT_URI, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        List<PlaceItem> items = loadContent(data);
+        txtNothing.setVisibility((items == null || items.isEmpty()) ? View.VISIBLE : View.GONE);
+        rcPlaces.setAdapter(new PlacesAdapter(items, this));
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        rcPlaces.setLayoutManager(llm);
+    }
+
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

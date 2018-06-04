@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
@@ -26,13 +26,9 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".ui.activities.SplashScreenActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <receiver android:name=".ui.services.AlarmReceiver" />
+        <receiver
+            android:name=".ui.services.AlarmReceiver"
+             />
 
         <activity
             android:name=".ui.activities.MainActivity"
@@ -48,7 +44,8 @@
         <activity
             android:name=".ui.activities.RegisterAlarmActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activities.MyPlacesActivity"/>
+        <activity android:name=".ui.activities.MyPlacesActivity" />
+
         <provider
             android:name=".data.WakePlaceContentProvider"
             android:authorities="udacity.contentprovider.wake"

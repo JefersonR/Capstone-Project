@@ -1,4 +1,4 @@
-package br.wake_in_place.models.response;
+package br.wake_in_place.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -121,7 +121,7 @@ public class AlarmItem implements Parcelable {
         this.radius = radius;
     }
 
-    protected AlarmItem(Parcel in) {
+    public AlarmItem(Parcel in) {
         id = in.readInt();
         date = in.readString();
         hour = in.readString();
